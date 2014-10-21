@@ -1,0 +1,13 @@
+<div class="row domain-selector" ng-controller="DomainIndexController">
+    <div class="col-sm-12">
+        <form class="form-inline" role="form">
+            <div class="form-group">
+                <select class="form-control" ng-model="selectedDomain" ng-options="d for d in domains"></select>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12" ui-view></div>
+</div>
