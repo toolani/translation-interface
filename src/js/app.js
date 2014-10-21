@@ -1,4 +1,8 @@
-angular.module('translation-interface', ['ui.router', 'ti.common', 'ti.domain', 'ti.string']).
+angular.module('translation-interface', ['ui.router', 
+                                         'ti.common', 
+                                         'ti.domain', 
+                                         'ti.language', 
+                                         'ti.string']).
 
 config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     
@@ -7,10 +11,11 @@ config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRou
     $stateProvider.
         state('domains', {
             url: '/domains',
-            templateUrl: '/template/translation/index.html'
+            templateUrl: '/template/translation/index.html',
+            controller: 'DomainIndexController'
         }).
         state('domains.single', {
-            url: '/:domainName',
+            url: '/:domainName/to/:languageCode',
             templateUrl: '/template/domain/list.html',
             controller: 'SingleDomainController'
         });

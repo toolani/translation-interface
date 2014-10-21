@@ -1,4 +1,8 @@
-angular.module('translation-interface', ['ui.router', 'ti.common', 'ti.domain', 'ti.string']).
+angular.module('translation-interface', ['ui.router', 
+                                         'ti.common', 
+                                         'ti.domain', 
+                                         'ti.language', 
+                                         'ti.string']).
 
 config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     
@@ -7,10 +11,11 @@ config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRou
     $stateProvider.
         state('domains', {
             url: '/domains',
-            templateUrl: '/template/translation/index.html'
+            templateUrl: '/template/translation/index.html',
+            controller: 'DomainIndexController'
         }).
         state('domains.single', {
-            url: '/:domainName',
+            url: '/:domainName/to/:languageCode',
             templateUrl: '/template/domain/list.html',
             controller: 'SingleDomainController'
         });
@@ -29,22 +34,55 @@ angular.module('ti.domain.directives',[]);
 angular.module('ti.domain.filters',[]);
 angular.module('ti.domain.services',[]);;
 angular.module('ti.domain.controllers').
-controller('DomainIndexController', ['$scope', '$state', 'DomainService',
-    function($scope, $state, DomainService) {
+controller('DomainIndexController', ['$scope', '$q', '$state', 'DomainService', 'LanguageService',
+    function($scope, $q, $state, DomainService, LanguageService) {
         $scope.state = 'loading';
         $scope.domains = [];
+        $scope.languages = [];
         $scope.selectedDomain = "";
+        $scope.selectedLanguage = "";
         
-        DomainService.query().then(function(domains) {
+        var allowToLoad = [];
+        
+        allowToLoad.push(DomainService.query().then(function(domains) {
             $scope.domains = domains;
+        }));
+        
+        allowToLoad.push(LanguageService.query().then(function(languages) {
+            $scope.languages = languages;
+        }));
+        
+        $q.all(allowToLoad).then(function() {
             $scope.state = 'loaded';
         });
         
         $scope.$watch('selectedDomain', function(newDomain) {
-            if (angular.isDefined(newDomain) && newDomain !== "") {
-                $state.go('domains.single', {domainName: newDomain});
-            }
+            setWorkingDomain(newDomain, $scope.selectedLanguage);
         });
+        
+        $scope.$watch('selectedLanguage', function(newLanguage) {
+            setWorkingDomain($scope.selectedDomain, newLanguage);
+        });
+        
+        var setWorkingDomain = function(domainName, languageCode) {
+            if (!(angular.isDefined(domainName) && domainName !== "")) {
+                return;
+            }
+            
+            if (!(angular.isDefined(languageCode) && languageCode !== "")) {
+                return;
+            }
+            
+            $state.go('domains.single', {domainName: domainName, languageCode: languageCode});
+        };
+        
+        $scope.hasSelectedDomain = function() {
+            return $scope.selectedDomain !== "";
+        };
+        
+        $scope.hasSelectedLanguage = function() {
+            return $scope.selectedLanguage !== "";
+        };
     }]);;
 angular.module('ti.domain.controllers').
 controller('SingleDomainController', ['$scope', '$stateParams', 'DomainService',
@@ -52,7 +90,7 @@ controller('SingleDomainController', ['$scope', '$stateParams', 'DomainService',
         $scope.state = 'loading';
         $scope.name = $stateParams.domainName;
         $scope.strings = [];
-        $scope.language = 'de';
+        $scope.language = $stateParams.languageCode;
         
         DomainService.get($scope.name).then(function(domainData) {
             $scope.strings = domainData.strings;
@@ -87,6 +125,32 @@ factory('DomainService', ['$http', '$q', function($http, $q) {
                 }).
                 error(function(data) {
                     deferred.resolve({});
+                });
+            
+            return deferred.promise;
+        }
+    };
+}]);;
+angular.module('ti.language',['ti.language.services']);
+
+// Init sub-modules
+angular.module('ti.language.services',[]);
+;
+angular.module('ti.language.services').
+factory('LanguageService', ['$http', '$q', function($http, $q) {
+    var url = '/api';
+    
+    return {
+        query: function() {
+            var deferred = $q.defer();
+            
+            $http.
+                get(url+'/languages').
+                success(function(data) {
+                    deferred.resolve(data);
+                }).
+                error(function(data) {
+                    deferred.resolve([]);
                 });
             
             return deferred.promise;

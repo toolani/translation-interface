@@ -29,6 +29,8 @@ module.exports = function(grunt) {
                   'src/js/common/**/*.js',
                   'src/js/domain/DomainModule.js',
                   'src/js/domain/**/*.js',
+                  'src/js/language/LanguageModule.js',
+                  'src/js/language/**/*.js',
                   'src/js/string/StringModule.js',
                   'src/js/string/**/*.js'
             ],
