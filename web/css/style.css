@@ -6168,5 +6168,9 @@ button.close {
 }
 .string-control textarea {
   min-height: 35px;
+  margin-bottom: 10px;
   resize: vertical;
+}
+.spaced-right {
+  margin-right: 5px;
 }

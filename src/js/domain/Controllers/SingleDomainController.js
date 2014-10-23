@@ -9,4 +9,10 @@ controller('SingleDomainController', ['$scope', '$stateParams', 'DomainService',
         DomainService.get($scope.name).then(function(domainData) {
             $scope.strings = domainData.strings;
         });
+        
+        $scope.saveTranslation = function(stringName, content, isNew) {
+            console.log(stringName, content, isNew);
+            
+            return true;
+        };
     }]);

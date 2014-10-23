@@ -5,13 +5,21 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-6">
-                <form role="form" ng-show="workingTranslation !== null">
+                <form role="form" ng-show="workingTranslation !== null" ng-submit="saveTranslation()">
                     <div class="form-group">
-                        <textarea class="form-control" rows="10" ng-model="workingTranslation"></textarea>
+                        <textarea class="form-control" rows="10" ng-model="workingTranslation" ng-disabled="disable"></textarea>
+                        <button class="btn btn-default pull-right" ng-disabled="disable" ng-show="isNew">Add</button>
+                        <button class="btn btn-default pull-right" ng-disabled="disable" ng-show="!isNew && workingTranslation !== lastSavedTranslation">Save</button>
+                        <button class="btn btn-default pull-right spaced-right" 
+                                type="button" 
+                                ng-disabled="disable" 
+                                ng-show="workingTranslation !== lastSavedTranslation" 
+                                ng-click="cancelChange()">Cancel</button>
                     </div>
                 </form>
                 <div ng-show="workingTranslation === null">
-                    <button class="btn btn-default">Add</button>
+                    <p class="text-muted"><i>No translation</i></p>
+                    <button class="btn btn-default pull-right" ng-click="addNew()">Add</button>
                 </div>
             </div>
             <div class="col-sm-6">
