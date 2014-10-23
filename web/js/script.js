@@ -2,7 +2,8 @@ angular.module('translation-interface', ['ui.router',
                                          'ti.common', 
                                          'ti.domain', 
                                          'ti.language', 
-                                         'ti.string']).
+                                         'ti.string', 
+                                         'ti.translation']).
 
 config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     
@@ -85,8 +86,8 @@ controller('DomainIndexController', ['$scope', '$q', '$state', 'DomainService', 
         };
     }]);;
 angular.module('ti.domain.controllers').
-controller('SingleDomainController', ['$scope', '$stateParams', 'DomainService',
-    function($scope, $stateParams, DomainService) {
+controller('SingleDomainController', ['$scope', '$stateParams', 'DomainService', 'TranslationService',
+    function($scope, $stateParams, DomainService, TranslationService) {
         $scope.state = 'loading';
         $scope.name = $stateParams.domainName;
         $scope.strings = [];
@@ -97,9 +98,14 @@ controller('SingleDomainController', ['$scope', '$stateParams', 'DomainService',
         });
         
         $scope.saveTranslation = function(stringName, content, isNew) {
-            console.log(stringName, content, isNew);
+            var t = {
+                domainName:   $scope.name,
+                stringName:   stringName,
+                languageCode: $scope.language,
+                content:      content
+            };
             
-            return true;
+            return TranslationService.save(t);
         };
     }]);;
 angular.module('ti.domain.services').
@@ -198,10 +204,19 @@ directive('stringControl', [function() {
             };
             
             $scope.saveTranslation = function() {
+                var t = {stringName: $scope.string.name, content: $scope.workingTranslation, isNew: $scope.isNew};
+                
                 $scope.disable = true;
-                $scope.save({stringName: $scope.string.name, content: $scope.workingTranslation, isNew: $scope.isNew});
-                $scope.lastSavedTranslation = $scope.workingTranslation;
-                $scope.disable = false;
+                $scope.errorMessage = null;
+                
+                $scope.save(t).then(function(result) {
+                    $scope.lastSavedTranslation = $scope.workingTranslation;
+                    $scope.disable = false;
+                },
+                function(error) {
+                    $scope.errorMessage = error;
+                    $scope.disable = false;
+                });
             };
         },
         restrict: 'E',
@@ -211,5 +226,35 @@ directive('stringControl', [function() {
             save: '&saveHandler'
         },
         templateUrl: '/template/string/control.html'
+    };
+}]);;
+angular.module('ti.translation',['ti.translation.services']);
+
+// Init sub-modules
+angular.module('ti.translation.services',[]);
+;
+angular.module('ti.translation.services').
+factory('TranslationService', ['$http', '$q', function($http, $q) {
+    var url = '/api';
+    
+    return {
+        save: function(translation) {
+            var deferred = $q.defer();
+            
+            $http.
+                post(url+'/domains/'+translation.domainName+'/strings/'+translation.stringName+'/translations/'+translation.languageCode, {content: translation.content}).
+                success(function(data) {
+                    if (angular.isDefined(data.result) && data.result === 'ok') {
+                        deferred.resolve(true);
+                    } else {
+                        deferred.resolve(false);
+                    }
+                }).
+                error(function(data) {
+                    deferred.reject(data);
+                });
+            
+            return deferred.promise;
+        }
     };
 }]);

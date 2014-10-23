@@ -32,7 +32,9 @@ module.exports = function(grunt) {
                   'src/js/language/LanguageModule.js',
                   'src/js/language/**/*.js',
                   'src/js/string/StringModule.js',
-                  'src/js/string/**/*.js'
+                  'src/js/string/**/*.js',
+                  'src/js/translation/TranslationModule.js',
+                  'src/js/translation/**/*.js'
             ],
             dest: 'web/js/script.js'
         }

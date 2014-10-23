@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <form role="form" ng-show="workingTranslation !== null" ng-submit="saveTranslation()">
-                    <div class="form-group">
+                    <div class="form-group clearfix">
                         <textarea class="form-control" rows="10" ng-model="workingTranslation" ng-disabled="disable"></textarea>
                         <button class="btn btn-default pull-right" ng-disabled="disable" ng-show="isNew">Add</button>
                         <button class="btn btn-default pull-right" ng-disabled="disable" ng-show="!isNew && workingTranslation !== lastSavedTranslation">Save</button>
@@ -16,6 +16,7 @@
                                 ng-show="workingTranslation !== lastSavedTranslation" 
                                 ng-click="cancelChange()">Cancel</button>
                     </div>
+                    <div class="alert alert-danger" ng-show="errorMessage"><p>{{errorMessage}}</p></div>
                 </form>
                 <div ng-show="workingTranslation === null">
                     <p class="text-muted"><i>No translation</i></p>

@@ -2,7 +2,8 @@ angular.module('translation-interface', ['ui.router',
                                          'ti.common', 
                                          'ti.domain', 
                                          'ti.language', 
-                                         'ti.string']).
+                                         'ti.string', 
+                                         'ti.translation']).
 
 config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     

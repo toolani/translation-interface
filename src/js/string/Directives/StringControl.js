@@ -28,10 +28,19 @@ directive('stringControl', [function() {
             };
             
             $scope.saveTranslation = function() {
+                var t = {stringName: $scope.string.name, content: $scope.workingTranslation, isNew: $scope.isNew};
+                
                 $scope.disable = true;
-                $scope.save({stringName: $scope.string.name, content: $scope.workingTranslation, isNew: $scope.isNew});
-                $scope.lastSavedTranslation = $scope.workingTranslation;
-                $scope.disable = false;
+                $scope.errorMessage = null;
+                
+                $scope.save(t).then(function(result) {
+                    $scope.lastSavedTranslation = $scope.workingTranslation;
+                    $scope.disable = false;
+                },
+                function(error) {
+                    $scope.errorMessage = error;
+                    $scope.disable = false;
+                });
             };
         },
         restrict: 'E',
