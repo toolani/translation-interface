@@ -1,2 +1,6 @@
 node_modules/
+/web/css/*
+!web/css/.gitkeep
+/web/js/*
+!web/js/.gitkeep
 sftp-config.json
