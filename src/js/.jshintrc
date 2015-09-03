@@ -1,0 +1,21 @@
+{
+    // Environments
+    "browser": true,
+    //"browserify": true,
+    "devel": true,
+    
+    // Other settings
+    
+    // Loops and conditionals require curly brackets
+    "curly": true,
+    // Allow ES6 features
+    "esnext": true,
+    // 4 space indent (does not create warnings)
+    "indent": 4,
+    // Capitalize constructor functions
+    "newcap": true,
+    // Prevent use of undefined variables
+    "undef": true,
+    // Warn about unused variables
+    "unused": true
+}

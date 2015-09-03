@@ -2,6 +2,16 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    env: {
+      options: {
+      },
+      dev: {
+        NODE_ENV: 'development'
+      },
+      prod: {
+        NODE_ENV: 'production'
+      }
+    },
     less: {
       development: {
         files: {
@@ -18,26 +28,24 @@ module.exports = function(grunt) {
         }
       }
     },
-    concat: {
+    browserify: {
+      options: {
+        transform: ['babelify', 'envify']
+      },
+      app: {
+        src: "src/js/app.js",
+        dest: "web/js/bundle.js",
+        options: {}
+      },
+      watch: {
+        src: "src/js/app.js",
+        dest: "web/js/bundle.js",
         options: {
-          separator: ";\n"
-        },
-        javascript:{
-            src:[
-                  'src/js/*.js', // app.js
-                  'src/js/common/CommonModule.js',
-                  'src/js/common/**/*.js',
-                  'src/js/domain/DomainModule.js',
-                  'src/js/domain/**/*.js',
-                  'src/js/language/LanguageModule.js',
-                  'src/js/language/**/*.js',
-                  'src/js/string/StringModule.js',
-                  'src/js/string/**/*.js',
-                  'src/js/translation/TranslationModule.js',
-                  'src/js/translation/**/*.js'
-            ],
-            dest: 'web/js/script.js'
+          watch: true,
+          keepAlive: true
         }
+      }
+      
     },
     uglify: {
         options: {
@@ -45,28 +53,19 @@ module.exports = function(grunt) {
         },
         javascript: {
             files: {
-              'web/js/script.min.js': ['<%= concat.javascript.dest %>']
+              'web/js/bundle.min.js': ['<%= browserify.app.dest %>']
             }
         }
-    },
-    watch: {
-      less: {
-        files: ['src/css/**/*.less'],
-        tasks: ['less']
-      },
-      js: {
-        files: ['<%= concat.javascript.src %>'],
-        tasks: ['concat', 'uglify']
-      }
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-env');
 
-  grunt.registerTask('default', ['less','concat','uglify']);
-
+  grunt.registerTask('default', ['env:prod', 'less', 'browserify:app', 'uglify']);
+  grunt.registerTask('bw', ['env:dev', 'browserify:watch']);
 };

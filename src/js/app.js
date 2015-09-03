@@ -1,23 +1,13 @@
-angular.module('translation-interface', ['ui.router', 
-                                         'ti.common', 
-                                         'ti.domain', 
-                                         'ti.language', 
-                                         'ti.string', 
-                                         'ti.translation']).
+import 'envify/custom';
+import React from 'react';
+import { Provider } from 'react-redux';
+import configureStore from './store/configureStore';
+import App from './containers/App';
 
-config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
-    
-    $urlRouterProvider.otherwise('/domains');
-    
-    $stateProvider.
-        state('domains', {
-            url: '/domains',
-            templateUrl: '/template/translation/index.html',
-            controller: 'DomainIndexController'
-        }).
-        state('domains.single', {
-            url: '/:domainName/to/:languageCode',
-            templateUrl: '/template/domain/list.html',
-            controller: 'SingleDomainController'
-        });
-}]);
+let store = configureStore();
+
+React.render((
+    <Provider store={store}>
+        {() => <App />}
+    </Provider>
+), document.getElementById('app-container'));
