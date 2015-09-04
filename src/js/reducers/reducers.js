@@ -1,14 +1,17 @@
 import { combineReducers } from 'redux';
 import {
-  REQUEST_DOMAINS,
-  RECEIVE_DOMAINS,
+  FETCH_DOMAINS_REQUEST,
+  FETCH_DOMAINS_SUCCESS,
+  FETCH_DOMAINS_FAILURE,
   SELECT_DOMAIN,
   INVALIDATE_DOMAINS,
-  REQUEST_LANGUAGES,
-  RECEIVE_LANGUAGES,
+  FETCH_LANGUAGES_REQUEST,
+  FETCH_LANGUAGES_SUCCESS,
+  FETCH_LANGUAGES_FAILURE,
   SELECT_LANGUAGE,
-  REQUEST_STRINGS,
-  RECEIVE_STRINGS,
+  FETCH_STRINGS_REQUEST,
+  FETCH_STRINGS_SUCCESS,
+  FETCH_STRINGS_FAILURE,
   SELECT_STRING,
   CLEAR_SELECTED_STRING,
   EDIT_SELECTED_STRING,
@@ -20,7 +23,9 @@ import {
   EDIT_NEW_STRING,
   CREATE_NEW_STRING_REQUEST,
   CREATE_NEW_STRING_SUCCESS,
-  CREATE_NEW_STRING_FAILURE
+  CREATE_NEW_STRING_FAILURE,
+  EDIT_FILTER_TEXT,
+  CLEAR_FILTER_TEXT
 } from '../actions/actions';
 
 // The name of the currently selected domain as a string
@@ -50,18 +55,47 @@ function domains(state = {
     return Object.assign({}, state, {
       didInvalidate: true
     });
-  case REQUEST_DOMAINS:
+  case FETCH_DOMAINS_REQUEST:
     return Object.assign({}, state, {
       isFetching: true,
       didInvalidate: false
     });
-  case RECEIVE_DOMAINS:
+  case FETCH_DOMAINS_SUCCESS:
     return Object.assign({}, state, {
       isFetching: false,
       didInvalidate: false,
       items: action.domains.slice(),
       lastUpdated: action.receivedAt
     });
+  case FETCH_DOMAINS_FAILURE:
+    return Object.assign({}, state, {
+      isFetching: false
+    });
+  default:
+    return state;
+  }
+}
+
+// An array of errors
+function errors(state = [], action) {
+  switch (action.type) {
+  case FETCH_DOMAINS_FAILURE:
+  case FETCH_LANGUAGES_FAILURE:
+  case FETCH_STRINGS_FAILURE:
+    console.log()
+    return [...state.slice(), action.error];
+  default:
+    return state;
+  }
+}
+
+// The filter text to apply to the string list as a string
+function filterText(state = "", action) {
+  switch(action.type) {
+  case CLEAR_FILTER_TEXT:
+    return "";
+  case EDIT_FILTER_TEXT:
+    return action.text;
   default:
     return state;
   }
@@ -99,17 +133,21 @@ function languages(state = {
   items: []
 }, action) {
   switch(action.type) {
-  case REQUEST_LANGUAGES:
+  case FETCH_LANGUAGES_REQUEST:
     return Object.assign({}, state, {
       isFetching: true,
       didInvalidate: false
     });
-  case RECEIVE_LANGUAGES:
+  case FETCH_LANGUAGES_SUCCESS:
     return Object.assign({}, state, {
       isFetching: false,
       didInvalidate: false,
       items: action.languages.slice(),
       lastUpdated: action.receivedAt
+    });
+  case FETCH_LANGUAGES_FAILURE:
+    return Object.assign({}, state, {
+      isFetching: false
     });
   default:
     return state;
@@ -244,17 +282,21 @@ function strings(state = {
   items: []
 }, action) {
   switch(action.type) {
-  case REQUEST_STRINGS:
+  case FETCH_STRINGS_REQUEST:
     return Object.assign({}, state, {
       isFetching: true,
       didInvalidate: false
     });
-  case RECEIVE_STRINGS:
+  case FETCH_STRINGS_SUCCESS:
     return Object.assign({}, state, {
       isFetching: false,
       didInvalidate: false,
       items: action.strings.slice(),
       lastUpdated: action.receivedAt
+    });
+  case FETCH_STRINGS_FAILURE:
+    return Object.assign({}, state, {
+      isFetching: false
     });
   case CREATE_NEW_STRING_SUCCESS:
     return Object.assign({}, state, {
@@ -294,8 +336,9 @@ function strings(state = {
 // A map of domain name -> the result of 'strings'
 function stringsByDomain(state = {}, action) {
   switch(action.type) {
-    case REQUEST_STRINGS:
-    case RECEIVE_STRINGS:
+    case FETCH_STRINGS_REQUEST:
+    case FETCH_STRINGS_SUCCESS:
+    case FETCH_STRINGS_FAILURE:
     case CREATE_NEW_STRING_SUCCESS:
     case UPDATE_SELECTED_STRING_SUCCESS:
       return Object.assign({}, state, {
@@ -308,6 +351,8 @@ function stringsByDomain(state = {}, action) {
 
 const translationApp = combineReducers({
   domains,
+  errors,
+  filterText,
   languages,
   newString,
   selectedDomain,

@@ -14,7 +14,9 @@ import {
     clearNewString,
     editNewStringName,
     editNewStringContent,
-    saveNewString
+    saveNewString,
+    clearFilterText,
+    editFilterText
 } from '../actions/actions';
 import Picker from '../components/Picker';
 import StringAdder from '../components/StringAdder';
@@ -33,6 +35,8 @@ class App extends Component {
         this.handleNewStringEditCancel = this.handleNewStringEditCancel.bind(this);
         this.handleNewStringChange = this.handleNewStringChange.bind(this);
         this.handleNewStringSave = this.handleNewStringSave.bind(this);
+        this.handleFilterTextClear = this.handleFilterTextClear.bind(this);
+        this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
     }
     
     componentDidMount() {
@@ -63,6 +67,14 @@ class App extends Component {
     
     handleNewStringEditCancel() {
         this.props.dispatch(clearNewString());
+    }
+    
+    handleFilterTextChange(e) {
+        this.props.dispatch(editFilterText(e.target.value));
+    }
+    
+    handleFilterTextClear() {
+        this.this.props.dispatch(clearFilterText());
     }
     
     handleNewStringChange(field, value) {
@@ -100,6 +112,8 @@ class App extends Component {
         const {
             selectedDomain,
             domains,
+            errors,
+            filterText,
             selectedLanguage,
             languages,
             newString,
@@ -126,6 +140,12 @@ class App extends Component {
             <div className="container">
                 <div className="row">
                 
+                {!!errors.length && 
+                    <div className="col-md-12">
+                        {errors.map(e => <div className="alert alert-danger">{e.message}</div>)}
+                    </div>
+                }
+                
                 {!isFetching.domains &&
                     <div className="col-md-2">
                         <Picker value={selectedDomain}
@@ -146,6 +166,20 @@ class App extends Component {
                                 options={languages.map(lang => lang.code)}
                                 showEmptyOption={!hasSelectedLanguage}
                                 title="Language" />
+                    </div>
+                }
+                
+                {strings.length > 0 && hasSelectedLanguage &&
+                    <div className="col-md-4">
+                        <div className="form-group">
+                            <label htmlFor="string-filter">Filter</label>
+                            <input className="form-control"
+                                   id="string-filter"
+                                   onChange={this.handleFilterTextChange}
+                                   placeholder="Type to filter list"
+                                   type="text"
+                                   value={filterText}/>
+                        </div>
                     </div>
                 }
                     
@@ -198,6 +232,8 @@ class App extends Component {
 
 App.propTypes = {
     domains: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    errors: PropTypes.arrayOf(PropTypes.instanceOf(Error)).isRequired,
+    filterText: PropTypes.string.isRequired,
     isFetching: PropTypes.shape({
         domains: PropTypes.bool.isRequired,
         languages: PropTypes.bool.isRequired,
@@ -229,10 +265,25 @@ App.propTypes = {
     dispatch: PropTypes.func.isRequired
 };
 
+function filterStrings(filterText, strings) {
+    return strings.filter(s => s.name.startsWith(filterText));
+}
+
 // Which props do we want to inject, given the global state?
 // Note: use https://github.com/faassen/reselect for better performance.
 function mapStateToProps(state) {
-    const {selectedDomain, domains, selectedLanguage, languages, newString, selectedString, stringsByDomain} = state;
+    const {
+        selectedDomain,
+        domains,
+        errors,
+        filterText,
+        selectedLanguage,
+        languages,
+        newString,
+        selectedString,
+        stringsByDomain
+    } = state;
+    
     // domains
     const {
         isFetching: isFetchingDomains,
@@ -260,6 +311,8 @@ function mapStateToProps(state) {
         items: []
     }
     
+    const filteredStrings = filterText.length ? filterStrings(filterText, strings) : strings;
+    
     const isFetching = {
         domains: isFetchingDomains,
         languages: isFetchingLanguages,
@@ -267,15 +320,17 @@ function mapStateToProps(state) {
     }
     
     return {
-        isFetching,
         domains: domainList,
+        errors,
+        filterText,
+        isFetching,
         languages: languageList,
         lastUpdated,
         newString,
         selectedDomain,
         selectedLanguage,
         selectedString,
-        strings
+        strings: filteredStrings
     };
 }
 
