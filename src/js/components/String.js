@@ -39,6 +39,31 @@ export default class String extends Component {
     this.props.onSave();
   }
   
+  shouldComponentUpdate(nextProps, nextState) {
+    const { allowSave, editorContent, editLanguage, error, name, translations } = this.props;
+    
+    if (nextProps.allowSave !== allowSave ||
+        nextProps.editorContent !== editorContent ||
+        nextProps.editLanguage !== editLanguage ||
+        nextProps.error !== error ||
+        nextProps.name !== name) {
+      return true;
+    }
+    
+    if (nextProps.translations.length !== translations.length) {
+      return true;
+    }
+    
+    for (var i = 0; i<nextProps.translations.length; i++) {
+      if (nextProps.translations[i].language !== translations[i].language ||
+        nextProps.translations[i].content !== translations[i].content) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
   render() {
     const { allowSave, editorContent, editLanguage, error, name, onSelect, translations } = this.props;
     const selectedTranslation = translations.find(t => t.language === editLanguage) || {
