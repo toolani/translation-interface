@@ -4,3 +4,4 @@ node_modules/
 /web/js/*
 !web/js/.gitkeep
 sftp-config.json
+sftp-config-alt.json
