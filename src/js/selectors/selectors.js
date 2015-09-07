@@ -24,7 +24,17 @@ const stringsSelector = createSelector(
 const filteredStringsSelector = createSelector(
     [filterTextSelector, stringsSelector],
     (filterText, strings) => {
-        return strings.filter(s => s.name.includes(filterText));
+        return strings.filter(s => {
+            if (s.name.includes(filterText)) {
+                return true;
+            }
+            
+            if (s.translations.find(t => t.content.includes(filterText))) {
+                return true;
+            }
+            
+            return false;
+        });
     }
 );
 
