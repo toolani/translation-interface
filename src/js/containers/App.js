@@ -124,6 +124,7 @@ class App extends Component {
         } = this.props;
         const hasSelectedDomain = selectedDomain !== "";
         const hasSelectedLanguage = selectedLanguage !== "";
+        const isFiltered = !!filterText.length;
         
         let instrucParts = [];
         if (!hasSelectedDomain) {
@@ -170,7 +171,7 @@ class App extends Component {
                     </div>
                 }
                 
-                {strings.length > 0 && hasSelectedLanguage &&
+                {hasSelectedDomain && hasSelectedLanguage && !isFetching.strings &&
                     <div className="col-md-4">
                         <div className="form-group">
                             <label htmlFor="string-filter">Filter</label>
@@ -197,10 +198,18 @@ class App extends Component {
                     </div>
                 }
                 
-                {hasSelectedDomain && !isFetching.strings && strings.length === 0  &&
+                {hasSelectedDomain && !isFetching.strings && !isFiltered && strings.length === 0  &&
                     <div className="row">
                         <div className="col-md-12">
                             <p>Translation domain is empty.</p>
+                        </div>
+                    </div>
+                }
+                
+                {hasSelectedDomain && !isFetching.strings && isFiltered && strings.length === 0  &&
+                    <div className="row">
+                        <div className="col-md-12">
+                            <p>No matches found for "{filterText}".</p>
                         </div>
                     </div>
                 }
