@@ -18,6 +18,7 @@ import {
     clearFilterText,
     editFilterText
 } from '../actions/actions';
+import { appSelector } from '../selectors/selectors';
 import Picker from '../components/Picker';
 import StringAdder from '../components/StringAdder';
 import StringList from '../components/StringList';
@@ -245,7 +246,6 @@ App.propTypes = {
             name: PropTypes.string.isRequired
         }).isRequired
     ).isRequired,
-    lastUpdated: PropTypes.number,
     newString: PropTypes.shape({
         name: PropTypes.string.isRequired,
         content: PropTypes.string.isRequired,
@@ -265,73 +265,4 @@ App.propTypes = {
     dispatch: PropTypes.func.isRequired
 };
 
-function filterStrings(filterText, strings) {
-    return strings.filter(s => s.name.startsWith(filterText));
-}
-
-// Which props do we want to inject, given the global state?
-// Note: use https://github.com/faassen/reselect for better performance.
-function mapStateToProps(state) {
-    const {
-        selectedDomain,
-        domains,
-        errors,
-        filterText,
-        selectedLanguage,
-        languages,
-        newString,
-        selectedString,
-        stringsByDomain
-    } = state;
-    
-    // domains
-    const {
-        isFetching: isFetchingDomains,
-        items: domainList
-    } = domains || {
-        isFetching: true,
-        items: []
-    }
-    
-    const {
-        isFetching: isFetchingLanguages,
-        items: languageList
-    } = languages || {
-        isFetching: true,
-        items: []
-    }
-    
-    // strings
-    const {
-        isFetching: isFetchingStrings,
-        lastUpdated,
-        items: strings
-    } = stringsByDomain[selectedDomain] || {
-        isFetching: true,
-        items: []
-    }
-    
-    const filteredStrings = filterText.length ? filterStrings(filterText, strings) : strings;
-    
-    const isFetching = {
-        domains: isFetchingDomains,
-        languages: isFetchingLanguages,
-        strings: isFetchingStrings
-    }
-    
-    return {
-        domains: domainList,
-        errors,
-        filterText,
-        isFetching,
-        languages: languageList,
-        lastUpdated,
-        newString,
-        selectedDomain,
-        selectedLanguage,
-        selectedString,
-        strings: filteredStrings
-    };
-}
-
-export default connect(mapStateToProps)(App);
+export default connect(appSelector)(App);
