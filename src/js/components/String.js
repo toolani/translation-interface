@@ -103,7 +103,7 @@ export default class String extends Component {
           }
           
           { mode === DISPLAY && selectedTranslation.isNonExistent && 
-            <button className="btn btn-default btn-sm"
+            <button className="btn btn-default btn-info btn-lg btn-full-width"
                     onClick={this.handleSelection}>Translate</button>
           }
           
