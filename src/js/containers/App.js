@@ -190,6 +190,18 @@ class App extends Component {
                     </div>
                 </div>
                 
+                {hasSelectedLanguage && hasSelectedDomain && !isFetching.strings &&
+                    <StringAdder name={newString.name}
+                                 content={newString.content}
+                                 error={newString.error}
+                                 isEditing={newString.isEditing}
+                                 isSaving={newString.isSaving}
+                                 onEditStart={this.handleNewStringEditStart}
+                                 onEditCancel={this.handleNewStringEditCancel}
+                                 onChange={this.handleNewStringChange}
+                                 onSave={this.handleNewStringSave} />
+                }
+                
                 {hasSelectedDomain && isFetching.strings && strings.length === 0 &&
                     <div className="row">
                         <div className="col-md-12">
@@ -212,18 +224,6 @@ class App extends Component {
                             <p>No matches found for "{filterText}".</p>
                         </div>
                     </div>
-                }
-                
-                {strings.length > 0 && hasSelectedLanguage &&
-                    <StringAdder name={newString.name}
-                                 content={newString.content}
-                                 error={newString.error}
-                                 isEditing={newString.isEditing}
-                                 isSaving={newString.isSaving}
-                                 onEditStart={this.handleNewStringEditStart}
-                                 onEditCancel={this.handleNewStringEditCancel}
-                                 onChange={this.handleNewStringChange}
-                                 onSave={this.handleNewStringSave} />
                 }
                 
                 {strings.length > 0 && hasSelectedLanguage &&
