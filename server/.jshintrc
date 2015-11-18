@@ -1,0 +1,20 @@
+{
+    // Environments
+    "node": true,
+    "devel": true,
+    
+    // Other settings
+    
+    // Allow semicolons to be left out
+    "asi": true,
+    // Loops and conditionals require curly brackets
+    "curly": true,
+    // 4 space indent (does not create warnings)
+    "indent": 4,
+    // Capitalize constructor functions
+    "newcap": true,
+    // Prevent use of undefined variables
+    "undef": true,
+    // Warn about unused variables
+    "unused": true
+}
