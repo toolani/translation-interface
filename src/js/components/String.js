@@ -54,7 +54,7 @@ export default class String extends Component {
       return true
     }
     
-    for (var i = 0 i<nextProps.translations.length i++) {
+    for (var i = 0; i<nextProps.translations.length; i++) {
       if (nextProps.translations[i].language !== translations[i].language ||
         nextProps.translations[i].content !== translations[i].content) {
         return true
@@ -126,7 +126,7 @@ export default class String extends Component {
                 <p className="text-muted">No translations</p>
               }
               
-              {otherTranslations.map((trans, index) => 
+              {otherTranslations.map((trans) => 
                 <div key={trans.language}>
                   <p>
                     <strong>{trans.language}</strong><br/>
