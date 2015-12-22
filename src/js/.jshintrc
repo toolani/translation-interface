@@ -6,6 +6,7 @@
     
     // Other settings
     
+    "asi": true,
     // Loops and conditionals require curly brackets
     "curly": true,
     // Allow ES6 features

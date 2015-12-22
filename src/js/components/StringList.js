@@ -1,9 +1,9 @@
-import React, { Component, PropTypes } from 'react';
-import String from './String';
+import React, { Component, PropTypes } from 'react'
+import String from './String'
 
 export default class StringList extends Component {
     render() {
-        const { editLanguage, onEditCancel, onEditChange, onEditSave, onSelect, selectedString, strings } = this.props;
+        const { editLanguage, onEditCancel, onEditChange, onEditSave, onSelect, selectedString, strings } = this.props
         
         return (
           <div>
@@ -20,7 +20,7 @@ export default class StringList extends Component {
                       onSelect={onSelect} />
             )}
           </div>
-        );
+        )
     }
 }
 

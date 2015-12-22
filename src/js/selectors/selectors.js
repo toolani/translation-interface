@@ -1,55 +1,55 @@
-import { createSelector } from 'reselect';
+import { createSelector } from 'reselect'
 
-const domainsSelector = (state) => state.domains.items;
-const errorsSelector = (state) => state.errors;
-const filterTextSelector = (state) => state.filterText;
-const languagesSelector = (state) => state.languages.items;
-const newStringSelector = (state) => state.newString;
-const selectedDomainSelector = (state) => state.selectedDomain;
-const selectedLanguageSelector = (state) => state.selectedLanguage;
-const selectedStringSelector = (state) => state.selectedString;
-const stringsByDomainSelector = (state) => state.stringsByDomain;
+const domainsSelector = (state) => state.domains.items
+const errorsSelector = (state) => state.errors
+const filterTextSelector = (state) => state.filterText
+const languagesSelector = (state) => state.languages.items
+const newStringSelector = (state) => state.newString
+const selectedDomainSelector = (state) => state.selectedDomain
+const selectedLanguageSelector = (state) => state.selectedLanguage
+const selectedStringSelector = (state) => state.selectedString
+const stringsByDomainSelector = (state) => state.stringsByDomain
 
 const stringsSelector = createSelector(
     [selectedDomainSelector, stringsByDomainSelector],
     (selectedDomain, stringsByDomain) => {
         if (typeof stringsByDomain[selectedDomain] === 'undefined') {
-            return [];
+            return []
         }
         
-        return stringsByDomain[selectedDomain].items;
+        return stringsByDomain[selectedDomain].items
     }
-);
+)
 
 const filteredStringsSelector = createSelector(
     [filterTextSelector, stringsSelector],
     (filterText, strings) => {
         return strings.filter(s => {
             if (s.name.includes(filterText)) {
-                return true;
+                return true
             }
             
             if (s.translations.find(t => t.content.includes(filterText))) {
-                return true;
+                return true
             }
             
-            return false;
-        });
+            return false
+        })
     }
-);
+)
 
-const domainsFetchingSelector = (state) => state.domains.isFetching;
-const languagesFetchingSelector = (state) => state.languages.isFetching;
+const domainsFetchingSelector = (state) => state.domains.isFetching
+const languagesFetchingSelector = (state) => state.languages.isFetching
 const stringsFetchingSelector = createSelector(
     [selectedDomainSelector, stringsByDomainSelector],
     (selectedDomain, stringsByDomain) => {
         if (typeof stringsByDomain[selectedDomain] === 'undefined') {
-            return true;
+            return true
         }
         
-        return stringsByDomain[selectedDomain].isFetching;
+        return stringsByDomain[selectedDomain].isFetching
     }
-);
+)
 
 const isFetchingSelector = createSelector(
     [domainsFetchingSelector, languagesFetchingSelector, stringsFetchingSelector],
@@ -58,9 +58,9 @@ const isFetchingSelector = createSelector(
             domains: isFetchingDomains,
             languages: isFetchingLanguages,
             strings: isFetchingStrings
-        };
+        }
     }
-);
+)
 
 export const appSelector = createSelector(
     [
@@ -87,6 +87,6 @@ export const appSelector = createSelector(
             selectedLanguage,
             selectedString,
             strings: filteredStrings
-        };
+        }
     }
-);
+)

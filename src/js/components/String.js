@@ -1,78 +1,78 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react'
 
-const EDIT = 'edit';
-const DISPLAY = 'display';
+const EDIT = 'edit'
+const DISPLAY = 'display'
 
 export default class String extends Component {
   constructor(props) {
-    super(props);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSelection = this.handleSelection.bind(this);
-    this.handleSave = this.handleSave.bind(this);
+    super(props)
+    this.handleCancel = this.handleCancel.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSelection = this.handleSelection.bind(this)
+    this.handleSave = this.handleSave.bind(this)
   }
   
   handleCancel(e) {
-    e.preventDefault();
-    this.props.onCancel();
+    e.preventDefault()
+    this.props.onCancel()
   }
   
   // Handles changes of the translation string that is currently being edited
   handleChange(e) {
-    this.props.onChange(e.target.value);
+    this.props.onChange(e.target.value)
   }
   
   // Selects a translation to edit
   handleSelection(e) {
-    e.preventDefault();
+    e.preventDefault()
     
-    const { editLanguage, name, onSelect } = this.props;
+    const { editLanguage, name, onSelect } = this.props
     
     if (editLanguage !== "") {
-      onSelect(name);
+      onSelect(name)
     }
   }
   
   // Saves the translation that is currently being edited
   handleSave(e) {
-    e.preventDefault();
-    this.props.onSave();
+    e.preventDefault()
+    this.props.onSave()
   }
   
   shouldComponentUpdate(nextProps, nextState) {
-    const { allowSave, editorContent, editLanguage, error, name, translations } = this.props;
+    const { allowSave, editorContent, editLanguage, error, name, translations } = this.props
     
     if (nextProps.allowSave !== allowSave ||
         nextProps.editorContent !== editorContent ||
         nextProps.editLanguage !== editLanguage ||
         nextProps.error !== error ||
         nextProps.name !== name) {
-      return true;
+      return true
     }
     
     if (nextProps.translations.length !== translations.length) {
-      return true;
+      return true
     }
     
-    for (var i = 0; i<nextProps.translations.length; i++) {
+    for (var i = 0 i<nextProps.translations.length i++) {
       if (nextProps.translations[i].language !== translations[i].language ||
         nextProps.translations[i].content !== translations[i].content) {
-        return true;
+        return true
       }
     }
     
-    return false;
+    return false
   }
   
   render() {
-    const { allowSave, editorContent, editLanguage, error, name, onSelect, translations } = this.props;
+    const { allowSave, editorContent, editLanguage, error, name, onSelect, translations } = this.props
     const selectedTranslation = translations.find(t => t.language === editLanguage) || {
       language: editLanguage,
       content: '',
       isNonExistent: true
-    };
-    const otherTranslations = translations.filter(t => t.language !== editLanguage);
-    const mode = editorContent !== undefined ? EDIT : DISPLAY;
+    }
+    const otherTranslations = translations.filter(t => t.language !== editLanguage)
+    const mode = editorContent !== undefined ? EDIT : DISPLAY
     
     return (
       <div className="row">
@@ -138,7 +138,7 @@ export default class String extends Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
@@ -158,4 +158,4 @@ String.propTypes = {
       content: PropTypes.string.isRequired
     })
   ).isRequired
-};
+}

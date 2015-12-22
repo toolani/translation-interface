@@ -1,40 +1,40 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react'
 
-const EDIT = 'EDIT';
-const NON_EDIT = 'NON_EDIT';
+const EDIT = 'EDIT'
+const NON_EDIT = 'NON_EDIT'
 
 export default class StringAdder extends Component {
     constructor(props) {
-        super(props);
+        super(props)
         
-        this.handleEditStart = this.handleEditStart.bind(this);
-        this.handleEditCancel = this.handleEditCancel.bind(this);
-        this.handleContentChange = this.handleContentChange.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleSave = this.handleSave.bind(this);
+        this.handleEditStart = this.handleEditStart.bind(this)
+        this.handleEditCancel = this.handleEditCancel.bind(this)
+        this.handleContentChange = this.handleContentChange.bind(this)
+        this.handleNameChange = this.handleNameChange.bind(this)
+        this.handleSave = this.handleSave.bind(this)
     }
     
     handleEditStart(e) {
-        e.preventDefault();
-        this.props.onEditStart();
+        e.preventDefault()
+        this.props.onEditStart()
     }
     
     handleEditCancel(e) {
-        e.preventDefault();
-        this.props.onEditCancel();
+        e.preventDefault()
+        this.props.onEditCancel()
     }
     
     handleContentChange(e) {
-        this.props.onChange('content', e.target.value);
+        this.props.onChange('content', e.target.value)
     }
     
     handleNameChange(e) {
-        this.props.onChange('name', e.target.value);
+        this.props.onChange('name', e.target.value)
     }
     
     handleSave(e) {
-        e.preventDefault();
-        this.props.onSave();
+        e.preventDefault()
+        this.props.onSave()
     }
   
     render() {
@@ -44,8 +44,8 @@ export default class StringAdder extends Component {
           error,
           isEditing,
           isSaving
-        } = this.props;
-        const mode = isEditing ? EDIT : NON_EDIT;
+        } = this.props
+        const mode = isEditing ? EDIT : NON_EDIT
         
         return (
           <div className="row">
@@ -88,7 +88,7 @@ export default class StringAdder extends Component {
               </div>
             }
           </div>
-        );
+        )
     }
 }
 

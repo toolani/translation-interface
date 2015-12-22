@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
 import {
     fetchDomains,
     selectDomain,
@@ -17,96 +17,96 @@ import {
     saveNewString,
     clearFilterText,
     editFilterText
-} from '../actions/actions';
-import { appSelector } from '../selectors/selectors';
-import Picker from '../components/Picker';
-import StringAdder from '../components/StringAdder';
-import StringList from '../components/StringList';
+} from '../actions/actions'
+import { appSelector } from '../selectors/selectors'
+import Picker from '../components/Picker'
+import StringAdder from '../components/StringAdder'
+import StringList from '../components/StringList'
 
 class App extends Component {
     constructor(props) {
-        super(props);
-        this.handleDomainChange = this.handleDomainChange.bind(this);
-        this.handleLanguageChange = this.handleLanguageChange.bind(this);
-        this.handleStringSelection = this.handleStringSelection.bind(this);
-        this.handleCancelStringSelection = this.handleCancelStringSelection.bind(this);
-        this.handleSelectedStringChange = this.handleSelectedStringChange.bind(this);
-        this.handleSelectedStringSave = this.handleSelectedStringSave.bind(this);
-        this.handleNewStringEditStart = this.handleNewStringEditStart.bind(this);
-        this.handleNewStringEditCancel = this.handleNewStringEditCancel.bind(this);
-        this.handleNewStringChange = this.handleNewStringChange.bind(this);
-        this.handleNewStringSave = this.handleNewStringSave.bind(this);
-        this.handleFilterTextClear = this.handleFilterTextClear.bind(this);
-        this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
+        super(props)
+        this.handleDomainChange = this.handleDomainChange.bind(this)
+        this.handleLanguageChange = this.handleLanguageChange.bind(this)
+        this.handleStringSelection = this.handleStringSelection.bind(this)
+        this.handleCancelStringSelection = this.handleCancelStringSelection.bind(this)
+        this.handleSelectedStringChange = this.handleSelectedStringChange.bind(this)
+        this.handleSelectedStringSave = this.handleSelectedStringSave.bind(this)
+        this.handleNewStringEditStart = this.handleNewStringEditStart.bind(this)
+        this.handleNewStringEditCancel = this.handleNewStringEditCancel.bind(this)
+        this.handleNewStringChange = this.handleNewStringChange.bind(this)
+        this.handleNewStringSave = this.handleNewStringSave.bind(this)
+        this.handleFilterTextClear = this.handleFilterTextClear.bind(this)
+        this.handleFilterTextChange = this.handleFilterTextChange.bind(this)
     }
     
     componentDidMount() {
-        const { dispatch, selectedDomain } = this.props;
-        dispatch(fetchDomains());
-        dispatch(fetchLanguages());
-        dispatch(fetchStringsIfNeeded(selectedDomain));
+        const { dispatch, selectedDomain } = this.props
+        dispatch(fetchDomains())
+        dispatch(fetchLanguages())
+        dispatch(fetchStringsIfNeeded(selectedDomain))
     }
     
     componentWillReceiveProps(nextProps) {
         if (nextProps.selectedDomain !== this.props.selectedDomain) {
-            const { dispatch, selectedDomain } = nextProps;
-            dispatch(fetchStringsIfNeeded(selectedDomain));
+            const { dispatch, selectedDomain } = nextProps
+            dispatch(fetchStringsIfNeeded(selectedDomain))
         }
     }
     
     handleDomainChange(nextDomain) {
-        this.props.dispatch(selectDomain(nextDomain));
+        this.props.dispatch(selectDomain(nextDomain))
     }
     
     handleLanguageChange(nextLanguage) {
-        this.props.dispatch(selectLanguage(nextLanguage));
+        this.props.dispatch(selectLanguage(nextLanguage))
     }
     
     handleNewStringEditStart() {
-        this.props.dispatch(startAddingNewString());
+        this.props.dispatch(startAddingNewString())
     }
     
     handleNewStringEditCancel() {
-        this.props.dispatch(clearNewString());
+        this.props.dispatch(clearNewString())
     }
     
     handleFilterTextChange(e) {
-        this.props.dispatch(editFilterText(e.target.value));
+        this.props.dispatch(editFilterText(e.target.value))
     }
     
     handleFilterTextClear() {
-        this.this.props.dispatch(clearFilterText());
+        this.this.props.dispatch(clearFilterText())
     }
     
     handleNewStringChange(field, value) {
         switch (field) {
         case 'content':
-            this.props.dispatch(editNewStringContent(value));
-            break;
+            this.props.dispatch(editNewStringContent(value))
+            break
         case 'name':
-            this.props.dispatch(editNewStringName(value));
-            break;
+            this.props.dispatch(editNewStringName(value))
+            break
         }
     }
     
     handleNewStringSave() {
-        this.props.dispatch(saveNewString());
+        this.props.dispatch(saveNewString())
     }
     
     handleStringSelection(nextString) {
-        this.props.dispatch(selectStringByName(nextString));
+        this.props.dispatch(selectStringByName(nextString))
     }
     
     handleCancelStringSelection() {
-        this.props.dispatch(clearSelectedString());
+        this.props.dispatch(clearSelectedString())
     }
     
     handleSelectedStringChange(nextContent) {
-        this.props.dispatch(editSelectedString(nextContent));
+        this.props.dispatch(editSelectedString(nextContent))
     }
     
     handleSelectedStringSave() {
-        this.props.dispatch(saveSelectedString());
+        this.props.dispatch(saveSelectedString())
     }
     
     render() {
@@ -121,21 +121,21 @@ class App extends Component {
             selectedString,
             strings,
             isFetching
-        } = this.props;
-        const hasSelectedDomain = selectedDomain !== "";
-        const hasSelectedLanguage = selectedLanguage !== "";
-        const isFiltered = !!filterText.length;
+        } = this.props
+        const hasSelectedDomain = selectedDomain !== ""
+        const hasSelectedLanguage = selectedLanguage !== ""
+        const isFiltered = !!filterText.length
         
-        let instrucParts = [];
+        let instrucParts = []
         if (!hasSelectedDomain) {
-            instrucParts.push('a translation domain');
+            instrucParts.push('a translation domain')
         }
         if (!hasSelectedLanguage) {
-            instrucParts.push('a language');
+            instrucParts.push('a language')
         }
-        let instructions = `Editing translation domain '${selectedDomain}'`;
+        let instructions = `Editing translation domain '${selectedDomain}'`
         if (instrucParts.length > 0) {
-            instructions = 'Please select '+ instrucParts.join(' and ');
+            instructions = 'Please select '+ instrucParts.join(' and ')
         }
         
         return (
@@ -236,7 +236,7 @@ class App extends Component {
                                 selectedString={selectedString} />
                 }
             </div>
-        );
+        )
     }
 }
 
@@ -272,6 +272,6 @@ App.propTypes = {
     }).isRequired,
     strings: PropTypes.array.isRequired,
     dispatch: PropTypes.func.isRequired
-};
+}
 
-export default connect(appSelector)(App);
+export default connect(appSelector)(App)

@@ -1,19 +1,19 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react'
 
 export default class Picker extends Component {
     render() {
-        const { labels, disabled, onChange, options, showEmptyOption, title, value } = this.props;
+        const { labels, disabled, onChange, options, showEmptyOption, title, value } = this.props
         
         if (labels && labels.length !== options.length) {
-          throw new Error('Picker needs an equal number of options and labels');
+            throw new Error('Picker needs an equal number of options and labels')
         }
       
-        let displayLabels  = labels ? labels : options;
-        let displayOptions = options;
+        let displayLabels  = labels ? labels : options
+        let displayOptions = options
         
         if (showEmptyOption) {
-          displayLabels  = ['', ...displayLabels];
-          displayOptions = ['', ...displayOptions];
+            displayLabels  = ['', ...displayLabels]
+            displayOptions = ['', ...displayOptions]
         }
         
         return (
@@ -30,7 +30,7 @@ export default class Picker extends Component {
               }
             </select>
           </div>
-        );
+        )
     }
 }
 

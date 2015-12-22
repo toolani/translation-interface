@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux'
 import {
   FETCH_DOMAINS_REQUEST,
   FETCH_DOMAINS_SUCCESS,
@@ -26,15 +26,15 @@ import {
   CREATE_NEW_STRING_FAILURE,
   EDIT_FILTER_TEXT,
   CLEAR_FILTER_TEXT
-} from '../actions/actions';
+} from '../actions/actions'
 
 // The name of the currently selected domain as a string
 function selectedDomain(state = "", action) {
   switch(action.type) {
   case SELECT_DOMAIN:
-    return action.domain;
+    return action.domain
   default:
-    return state;
+    return state
   }
 }
 
@@ -54,25 +54,25 @@ function domains(state = {
   case INVALIDATE_DOMAINS:
     return Object.assign({}, state, {
       didInvalidate: true
-    });
+    })
   case FETCH_DOMAINS_REQUEST:
     return Object.assign({}, state, {
       isFetching: true,
       didInvalidate: false
-    });
+    })
   case FETCH_DOMAINS_SUCCESS:
     return Object.assign({}, state, {
       isFetching: false,
       didInvalidate: false,
       items: action.domains.slice(),
       lastUpdated: action.receivedAt
-    });
+    })
   case FETCH_DOMAINS_FAILURE:
     return Object.assign({}, state, {
       isFetching: false
-    });
+    })
   default:
-    return state;
+    return state
   }
 }
 
@@ -83,9 +83,9 @@ function errors(state = [], action) {
   case FETCH_LANGUAGES_FAILURE:
   case FETCH_STRINGS_FAILURE:
     console.log()
-    return [...state.slice(), action.error];
+    return [...state.slice(), action.error]
   default:
-    return state;
+    return state
   }
 }
 
@@ -93,11 +93,11 @@ function errors(state = [], action) {
 function filterText(state = "", action) {
   switch(action.type) {
   case CLEAR_FILTER_TEXT:
-    return "";
+    return ""
   case EDIT_FILTER_TEXT:
-    return action.text;
+    return action.text
   default:
-    return state;
+    return state
   }
 }
 
@@ -105,9 +105,9 @@ function filterText(state = "", action) {
 function selectedLanguage(state = "", action) {
   switch(action.type) {
   case SELECT_LANGUAGE:
-    return action.language;
+    return action.language
   default:
-    return state;
+    return state
   }
 }
 
@@ -137,20 +137,20 @@ function languages(state = {
     return Object.assign({}, state, {
       isFetching: true,
       didInvalidate: false
-    });
+    })
   case FETCH_LANGUAGES_SUCCESS:
     return Object.assign({}, state, {
       isFetching: false,
       didInvalidate: false,
       items: action.languages.slice(),
       lastUpdated: action.receivedAt
-    });
+    })
   case FETCH_LANGUAGES_FAILURE:
     return Object.assign({}, state, {
       isFetching: false
-    });
+    })
   default:
-    return state;
+    return state
   }
 }
 
@@ -172,7 +172,7 @@ function newString(state = {
 }, action) {
   switch(action.type) {
   case START_ADDING_NEW_STRING:
-    return Object.assign({}, state, {isEditing: true});
+    return Object.assign({}, state, {isEditing: true})
   case CLEAR_NEW_STRING:
     return Object.assign({}, state, {
       name: "",
@@ -180,18 +180,18 @@ function newString(state = {
       error: null,
       isEditing: false,
       isSaving: false
-    });
+    })
   case EDIT_NEW_STRING:
     if (typeof action.name !== 'undefined') {
       return Object.assign({}, state, {
         name: action.name
-      });
+      })
     }
     return Object.assign({}, state, {
       content: action.content
-    });
+    })
   case CREATE_NEW_STRING_REQUEST:
-    return Object.assign({}, state, {isSaving: true});
+    return Object.assign({}, state, {isSaving: true})
   case CREATE_NEW_STRING_SUCCESS:
     return Object.assign({}, state, {
       name: "",
@@ -199,14 +199,14 @@ function newString(state = {
       error: null,
       isEditing: false,
       isSaving: false
-    });
+    })
   case CREATE_NEW_STRING_FAILURE:
     return Object.assign({}, state, {
       error: action.error,
       isSaving: false
-    });
+    })
   default:
-    return state;
+    return state
   }
 }
 
@@ -234,17 +234,17 @@ function selectedString(state = {
       error: null,
       isDirty: false,
       isUpdating: false
-    });
+    })
   case EDIT_SELECTED_STRING:
     if (action.content !== state.content) {
       return Object.assign({}, state, {
         content: action.content,
         isDirty: true
-      });
+      })
     }
-    return state;
+    return state
   case UPDATE_SELECTED_STRING_REQUEST:
-    return Object.assign({}, state, {isUpdating: true});
+    return Object.assign({}, state, {isUpdating: true})
   case CLEAR_SELECTED_STRING:
   case UPDATE_SELECTED_STRING_SUCCESS:
     return Object.assign({}, state, {
@@ -253,11 +253,11 @@ function selectedString(state = {
       error: null,
       isDirty: false,
       isUpdating: false
-    });
+    })
   case UPDATE_SELECTED_STRING_FAILURE:
-    return Object.assign({}, state, {isUpdating: false, error: action.error});
+    return Object.assign({}, state, {isUpdating: false, error: action.error})
   default:
-    return state;
+    return state
   }
 }
 
@@ -286,18 +286,18 @@ function strings(state = {
     return Object.assign({}, state, {
       isFetching: true,
       didInvalidate: false
-    });
+    })
   case FETCH_STRINGS_SUCCESS:
     return Object.assign({}, state, {
       isFetching: false,
       didInvalidate: false,
       items: action.strings.slice(),
       lastUpdated: action.receivedAt
-    });
+    })
   case FETCH_STRINGS_FAILURE:
     return Object.assign({}, state, {
       isFetching: false
-    });
+    })
   case CREATE_NEW_STRING_SUCCESS:
     return Object.assign({}, state, {
       items: [
@@ -310,10 +310,10 @@ function strings(state = {
         },
         ...state.items.slice()
       ]
-    });
+    })
   case UPDATE_SELECTED_STRING_SUCCESS:
-    const strIndex = state.items.findIndex(i => i.name === action.name);
-    const trnIndex = state.items[strIndex].translations.findIndex(t => t.language === action.language);
+    const strIndex = state.items.findIndex(i => i.name === action.name)
+    const trnIndex = state.items[strIndex].translations.findIndex(t => t.language === action.language)
     const translations = [
       ...state.items[strIndex].translations.slice(0, trnIndex),
       Object.assign({}, state.items[strIndex].translations[trnIndex], {
@@ -321,15 +321,15 @@ function strings(state = {
         content: action.content
       }),
       ...state.items[strIndex].translations.slice(trnIndex + 1)
-    ];
+    ]
     const items = [
       ...state.items.slice(0, strIndex),
       Object.assign({}, state.items[strIndex], {translations: translations}),
       ...state.items.slice(strIndex + 1)
-    ];
-    return Object.assign({}, state, {items: items});
+    ]
+    return Object.assign({}, state, {items: items})
   default:
-    return state;
+    return state
   }
 }
 
@@ -343,9 +343,9 @@ function stringsByDomain(state = {}, action) {
     case UPDATE_SELECTED_STRING_SUCCESS:
       return Object.assign({}, state, {
         [action.domain]: strings(state[action.domain], action)
-      });
+      })
     default:
-      return state;
+      return state
   }
 }
 
@@ -359,6 +359,6 @@ const translationApp = combineReducers({
   selectedLanguage,
   selectedString,
   stringsByDomain
-});
+})
 
-export default translationApp;
+export default translationApp

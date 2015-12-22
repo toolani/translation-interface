@@ -16,22 +16,22 @@ var apiProxy = httpProxy.createProxyServer({target:'http://localhost:8181'})
 
 // Rewrite requests to remove the apiRoot from the path.
 apiProxy.on('proxyReq', function(proxyReq) {
-  if (proxyReq.path === apiRoot) {
-    proxyReq.path = '/'
-  } else {
-    proxyReq.path = proxyReq.path.substr(apiRoot.length)
-  }
-});
+    if (proxyReq.path === apiRoot) {
+        proxyReq.path = '/'
+    } else {
+        proxyReq.path = proxyReq.path.substr(apiRoot.length)
+    }
+})
 
 apiProxy.on('proxyRes', function(proxyRes, req) {
     logRequest(req, proxyRes)
 })
 
 apiProxy.on('error', function (err, req, res) {
-  res.writeHead(500);
-  res.end();
-  logRequest(req, res)
-});
+    res.writeHead(500)
+    res.end()
+    logRequest(req, res)
+})
 
 // Proxy API requests to the API, or otherwise, try to serve the requested file from the web/ 
 // subdirectory
@@ -71,7 +71,7 @@ var serveFile = function(req, res) {
             responseStream.on('finish', function () { 
                 res.end()
                 logRequest(req, res)
-            });
+            })
         } else {
             res.writeHead(404)
             res.end()
