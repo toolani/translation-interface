@@ -61,7 +61,7 @@ var serveFile = function(req, res) {
     var fsPath = baseDirectory + requestUrl.pathname
     
     if (requestUrl.pathname === '/') {
-        fsPath += 'index.html'
+        fsPath += 'index-dev.html'
     }
     
     fs.exists(fsPath, function(exists) {
