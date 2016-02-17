@@ -1,5 +1,9 @@
 {
   "name": "translation-interface",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/petert82/translation-interface.git"
+  },
   "version": "1.0.0-alpha",
   "dependencies": {
     "babel-polyfill": "^6.5.0",
