@@ -134,7 +134,7 @@ function receiveStrings(domain, json) {
 
 function fetchStrings(domain) {
     return dispatch => {
-        dispatch(requestStrings())
+        dispatch(requestStrings(domain))
         
         return fetch(`/translation-api/domains/${domain}`)
             .then(checkStatus)
