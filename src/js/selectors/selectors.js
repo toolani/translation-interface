@@ -64,8 +64,48 @@ const isFetchingSelector = createSelector(
 
 export const appSelector = createSelector(
     [
+        errorsSelector
+    ],
+    (errors) => {
+        return {
+            errors
+        }
+    }
+)
+
+export const domainChooserSelector = createSelector(
+    [
         domainsSelector,
-        errorsSelector,
+        isFetchingSelector
+    ],
+    (domains, isFetching) => {
+        return {
+            domains,
+            isFetching
+        }
+    }
+)
+
+export const languageChooserSelector = createSelector(
+    [
+        domainsSelector,
+        isFetchingSelector,
+        languagesSelector,
+        selectedDomainSelector
+    ],
+    (domains, isFetching, languages, selectedDomain) => {
+        return {
+            domains,
+            isFetching,
+            languages,
+            selectedDomain
+        }
+    }
+)
+
+export const stringEditorSelector = createSelector(
+    [
+        domainsSelector,
         filteredStringsSelector,
         filterTextSelector,
         isFetchingSelector,
@@ -75,10 +115,9 @@ export const appSelector = createSelector(
         selectedLanguageSelector,
         selectedStringSelector
     ],
-    (domains, errors, filteredStrings, filterText, isFetching, languages, newString, selectedDomain, selectedLanguage, selectedString) => {
+    (domains, filteredStrings, filterText, isFetching, languages, newString, selectedDomain, selectedLanguage, selectedString) => {
         return {
             domains,
-            errors,
             filterText,
             isFetching,
             languages,

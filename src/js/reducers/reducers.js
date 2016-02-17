@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux'
+import { routeReducer } from 'react-router-redux'
 import {
   FETCH_DOMAINS_REQUEST,
   FETCH_DOMAINS_SUCCESS,
@@ -349,16 +350,17 @@ function stringsByDomain(state = {}, action) {
   }
 }
 
-const translationApp = combineReducers({
+const reducers = combineReducers({
   domains,
   errors,
   filterText,
   languages,
   newString,
+  routing: routeReducer,
   selectedDomain,
   selectedLanguage,
   selectedString,
   stringsByDomain
 })
 
-export default translationApp
+export default reducers
