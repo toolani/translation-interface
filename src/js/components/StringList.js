@@ -3,7 +3,16 @@ import String from './String'
 
 export default class StringList extends Component {
     render() {
-        const { editLanguage, onEditCancel, onEditChange, onEditSave, onSelect, selectedString, strings } = this.props
+        const {
+          editLanguage,
+          onEditCancel,
+          onEditChange,
+          onEditSave,
+          onLanguageChange,
+          onSelect,
+          selectedString,
+          strings
+        } = this.props
         
         return (
           <div>
@@ -16,6 +25,7 @@ export default class StringList extends Component {
                       key={index}
                       onCancel={onEditCancel}
                       onChange={onEditChange}
+                      onLanguageChange={onLanguageChange}
                       onSave={onEditSave}
                       onSelect={onSelect} />
             )}
@@ -33,6 +43,7 @@ StringList.PropTypes = {
     onEditCancel: PropTypes.func.isRequired,
     onEditChange: PropTypes.func.isRequired,
     onEditSave: PropTypes.func.isRequired,
+    onLanguageChange: PropTypes.func.isRequired,
     onSelect: PropTypes.func.isRequired,
     selectedString: PropTypes.shape({
         name: PropTypes.string.isRequired,

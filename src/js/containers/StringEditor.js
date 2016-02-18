@@ -269,6 +269,7 @@ class LanguageChooser extends Component {
                                 onEditCancel={this.handleCancelStringSelection}
                                 onEditChange={this.handleSelectedStringChange}
                                 onEditSave={this.handleSelectedStringSave}
+                                onLanguageChange={this.handleLanguageChange}
                                 selectedString={selectedString} />
                 }
                 

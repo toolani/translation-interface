@@ -10,6 +10,8 @@ export default class String extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleSelection = this.handleSelection.bind(this)
     this.handleSave = this.handleSave.bind(this)
+    this.handleLanguageSelection = this.handleLanguageSelection.bind(this)
+    this.isInDisplayMode = this.isInDisplayMode.bind(this)
   }
   
   handleCancel(e) {
@@ -39,7 +41,22 @@ export default class String extends Component {
     this.props.onSave()
   }
   
-  shouldComponentUpdate(nextProps, nextState) {
+  handleLanguageSelection(languageCode) {
+    // Don't allow changing language while editing
+    if (this.isInDisplayMode()) {
+      this.props.onLanguageChange(languageCode)
+    }
+  }
+  
+  isInDisplayMode() {
+    return typeof this.props.editorContent === 'undefined'
+  }
+  
+  isInEditMode() {
+    return typeof this.props.editorContent !== 'undefined'
+  }
+  
+  shouldComponentUpdate(nextProps) {
     const { allowSave, editorContent, editLanguage, error, name, translations } = this.props
     
     if (nextProps.allowSave !== allowSave ||
@@ -65,14 +82,14 @@ export default class String extends Component {
   }
   
   render() {
-    const { allowSave, editorContent, editLanguage, error, name, onSelect, translations } = this.props
+    const { allowSave, editorContent, editLanguage, error, name, translations } = this.props
     const selectedTranslation = translations.find(t => t.language === editLanguage) || {
       language: editLanguage,
       content: '',
       isNonExistent: true
     }
     const otherTranslations = translations.filter(t => t.language !== editLanguage)
-    const mode = editorContent !== undefined ? EDIT : DISPLAY
+    const mode = this.isInEditMode() ? EDIT : DISPLAY
     
     return (
       <div className="row">
@@ -120,21 +137,23 @@ export default class String extends Component {
         </div>
         
         <div className="col-md-6">
-          <div className="panel panel-default">
-            <div className="panel-body">
+          <div className="list-group">
+            
               { !otherTranslations.length && 
-                <p className="text-muted">No translations</p>
+                <div className="list-group-item">
+                  <p className="list-group-item-text text-muted">No translations</p>
+                </div>
               }
               
               {otherTranslations.map((trans) => 
-                <div key={trans.language}>
-                  <p>
-                    <strong>{trans.language}</strong><br/>
-                    {trans.content}
-                  </p>
-                </div>
+                <a key={trans.language}
+                   className="list-group-item clickable"
+                   onClick={() => this.handleLanguageSelection(trans.language)}>
+                  <h5 className="list-group-item-heading">{trans.language}</h5>
+                  <p className="list-group-item-text">{trans.content}</p>
+                </a>
               )}
-            </div>
+            
           </div>
         </div>
       </div>
@@ -150,6 +169,7 @@ String.propTypes = {
   name: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
+  onLanguageChange: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
   translations: PropTypes.arrayOf(
