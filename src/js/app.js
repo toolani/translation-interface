@@ -8,6 +8,7 @@ import App from './containers/App'
 import DomainChooser from './containers/DomainChooser'
 import LanguageChooser from './containers/LanguageChooser'
 import StringEditor from './containers/StringEditor'
+import SearchResults from './containers/SearchResults'
 
 let store = configureStore()
 
@@ -19,6 +20,7 @@ ReactDOM.render((
                 <Route path="domain/:domainName" component={LanguageChooser} />
                 <Route path="domain/:domainName/lang/:languageCode" component={StringEditor} />
                 <Route path="domain/:domainName/lang/:languageCode/filter/:filter" component={StringEditor} />
+                <Route path="search/:searchTerm" component={SearchResults} />
             </Route>
         </Router>
     </Provider>

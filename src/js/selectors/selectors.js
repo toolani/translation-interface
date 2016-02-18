@@ -9,6 +9,8 @@ const selectedDomainSelector = (state) => state.selectedDomain
 const selectedLanguageSelector = (state) => state.selectedLanguage
 const selectedStringSelector = (state) => state.selectedString
 const stringsByDomainSelector = (state) => state.stringsByDomain
+const searchResultsByTermSelector = (state) => state.searchResultsByTerm
+const searchTermSelector = (state) => state.searchTerm
 
 const stringsSelector = createSelector(
     [selectedDomainSelector, stringsByDomainSelector],
@@ -38,6 +40,17 @@ const filteredStringsSelector = createSelector(
     }
 )
 
+const searchResultsSelector = createSelector(
+    [searchTermSelector, searchResultsByTermSelector],
+    (searchTerm, searchResultsByTerm) => {
+        if (typeof searchResultsByTerm[searchTerm] === 'undefined') {
+            return []
+        }
+        
+        return searchResultsByTerm[searchTerm].items
+    }
+)
+
 const domainsFetchingSelector = (state) => state.domains.isFetching
 const languagesFetchingSelector = (state) => state.languages.isFetching
 const stringsFetchingSelector = createSelector(
@@ -50,13 +63,24 @@ const stringsFetchingSelector = createSelector(
         return stringsByDomain[selectedDomain].isFetching
     }
 )
+const searchResultsFetchingSelector = createSelector(
+    [searchTermSelector, searchResultsByTermSelector],
+    (searchTerm, searchResultsByTerm) => {
+        if (typeof searchResultsByTerm[searchTerm] === 'undefined') {
+            return true
+        }
+        
+        return searchResultsByTerm[searchTerm].isFetching
+    }
+)
 
 const isFetchingSelector = createSelector(
-    [domainsFetchingSelector, languagesFetchingSelector, stringsFetchingSelector],
-    (isFetchingDomains, isFetchingLanguages, isFetchingStrings) => {
+    [domainsFetchingSelector, languagesFetchingSelector, searchResultsFetchingSelector, stringsFetchingSelector],
+    (isFetchingDomains, isFetchingLanguages, isFetchingSearchResults, isFetchingStrings) => {
         return {
             domains: isFetchingDomains,
             languages: isFetchingLanguages,
+            searchResults: isFetchingSearchResults,
             strings: isFetchingStrings
         }
     }
@@ -126,6 +150,17 @@ export const stringEditorSelector = createSelector(
             selectedLanguage,
             selectedString,
             strings: filteredStrings
+        }
+    }
+)
+
+export const searchResultsContainerSelector = createSelector(
+    [isFetchingSelector, searchResultsSelector, searchTermSelector],
+    (isFetching, searchResults, searchTerm) => {
+        return {
+            isFetching,
+            results: searchResults,
+            term: searchTerm
         }
     }
 )

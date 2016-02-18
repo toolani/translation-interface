@@ -26,7 +26,11 @@ import {
   CREATE_NEW_STRING_SUCCESS,
   CREATE_NEW_STRING_FAILURE,
   EDIT_FILTER_TEXT,
-  CLEAR_FILTER_TEXT
+  CLEAR_FILTER_TEXT,
+  PERFORM_SEARCH_REQUEST,
+  PERFORM_SEARCH_SUCCESS,
+  PERFORM_SEARCH_FAILURE,
+  EDIT_SEARCH_TERM
 } from '../actions/actions'
 
 // The name of the currently selected domain as a string
@@ -350,6 +354,72 @@ function stringsByDomain(state = {}, action) {
   }
 }
 
+/*
+{
+  isFetching: false,
+  didInvalidate: false,
+  lastUpdated: <Date>
+  items: [
+    {
+      domain_name: "messages",
+      string_name: "greeting",
+      language_code: "en",
+      translation_content: "hello"
+    }
+  ]
+}
+ */
+function searchResults(state = {
+  isFetching: false,
+  didInvalidate: false,
+  items: []
+}, action) {
+  switch(action.type) {
+    case PERFORM_SEARCH_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true,
+        didInvalidate: false
+      })
+    case PERFORM_SEARCH_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        didInvalidate: false,
+        items: action.results,
+        lastUpdated: action.receivedAt
+      })
+    case PERFORM_SEARCH_FAILURE:
+      return Object.assign({}, state, {
+        isFetching: false
+      })
+    default:
+      return state
+  }
+}
+
+// String containing the most recently searched search term
+function searchTerm(state = "", action) {
+  switch(action.type) {
+    case EDIT_SEARCH_TERM:
+      return action.searchTerm
+    default:
+      return state
+  }
+}
+
+// A map of search term -> the result of 'searchResults'
+function searchResultsByTerm(state = {}, action) {
+  switch(action.type) {
+    case PERFORM_SEARCH_REQUEST:
+    case PERFORM_SEARCH_SUCCESS:
+    case PERFORM_SEARCH_FAILURE:
+      return Object.assign({}, state, {
+        [action.searchTerm]: searchResults(state[action.searchTerm], action)
+      })
+    default:
+      return state
+  }
+}
+
 const reducers = combineReducers({
   domains,
   errors,
@@ -357,6 +427,8 @@ const reducers = combineReducers({
   languages,
   newString,
   routing: routeReducer,
+  searchResultsByTerm,
+  searchTerm,
   selectedDomain,
   selectedLanguage,
   selectedString,

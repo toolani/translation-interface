@@ -31,6 +31,11 @@ export const CREATE_NEW_STRING_FAILURE = 'CREATE_NEW_STRING_FAILURE'
 export const EDIT_FILTER_TEXT = 'EDIT_FILTER_TEXT'
 export const CLEAR_FILTER_TEXT = 'CLEAR_FILTER_TEXT'
 
+export const PERFORM_SEARCH_REQUEST = 'PERFORM_SEARCH_REQUEST'
+export const PERFORM_SEARCH_SUCCESS = 'PERFORM_SEARCH_SUCCESS'
+export const PERFORM_SEARCH_FAILURE = 'PERFORM_SEARCH_FAILURE'
+export const EDIT_SEARCH_TERM = 'EDIT_SEARCH_TERM'
+
 function checkStatus(response) {
     if (response.status >= 400) {
         throw new Error(`Request failed with status '${response.status}'`)
@@ -361,5 +366,85 @@ export function editFilterText(filterText) {
 export function clearFilterText() {
     return {
         type: CLEAR_FILTER_TEXT
+    }
+}
+
+function requestSearch(searchTerm) {
+    return {
+        type: PERFORM_SEARCH_REQUEST,
+        searchTerm
+    }
+}
+
+function receiveSearchResults(searchTerm, results) {
+    return {
+        type: PERFORM_SEARCH_SUCCESS,
+        searchTerm,
+        results,
+        receivedAt: Date.now()
+    }
+}
+
+function fetchSearchResults(searchTerm) {
+    return dispatch => {
+        dispatch(requestSearch(searchTerm))
+        
+        return fetch(`translation-api/search?term=${encodeURIComponent(searchTerm)}&by=all`)
+            .then(checkStatus)
+            .then(response => response.json())
+            .then(json => json.map(res => {
+                return {
+                    domainName: res.domain_name,
+                    stringName: res.string_name,
+                    languageCode: res.language_code,
+                    translationContent: res.translation_content
+                }
+            }))
+            .then(results => dispatch(receiveSearchResults(searchTerm, results)))
+            .catch(reportHttpError(dispatch, PERFORM_SEARCH_FAILURE, "Could not perform search"))
+    }
+}
+
+function shouldFetchSearchResults(state, searchTerm) {
+    const results = state.searchResultsByTerm[searchTerm]
+    
+    if (searchTerm === '') {
+        return false
+    } else if (!results) {
+        return true
+    } else if (results.isFetching) {
+        return false
+    }
+    
+    const expireAfter = 30 * 1000
+    const resultAge = Date.now() - results.lastUpdated
+    
+    if (resultAge > expireAfter) {
+        return true
+    } else {
+        return results.didInvalidate
+    }
+}
+
+function editSearchTerm(searchTerm) {
+    return {
+        type: EDIT_SEARCH_TERM,
+        searchTerm
+    }
+}
+
+function shouldEditSearchTerm(state, searchTerm) {
+    return searchTerm !== state.searchTerm
+}
+
+export function fetchSearchResultsIfNeeded(searchTerm) {
+    return (dispatch, getState) => {
+        if (shouldEditSearchTerm(getState(), searchTerm)) {
+            dispatch(editSearchTerm(searchTerm))
+        }
+        
+        if (shouldFetchSearchResults(getState(), searchTerm)) {
+            return dispatch(fetchSearchResults(searchTerm))
+        }
     }
 }
