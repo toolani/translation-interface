@@ -36,7 +36,7 @@ class SearchResults extends Component {
     handlePerformSearch(e) {
         e.preventDefault()
         const newTerm = this._searchInput.value
-        const url = `search/${newTerm}`
+        const url = `/search/${newTerm}`
         this.props.dispatch(routeActions.push(url))
     }
     
@@ -50,9 +50,11 @@ class SearchResults extends Component {
         return (
             <div className="row">
                 <div className="col-md-8">
-                    <p>Showing results from all translation domains for "{term}".</p>
+                {!isFetching.searchResults &&
+                    <p>Found {results.length} results from all translation domains for "{term}".</p>
+                }
                     
-                {!isFetching.searchResults && results.length > 0 &&
+                {!isFetching.searchResults && !!results.length &&
                     <p>Click on any result below to go to the page for that string.</p>
                 }
                 </div>
@@ -81,19 +83,13 @@ class SearchResults extends Component {
                     </div>
                 }
                 
-                {!isFetching.searchResults && results.length > 0 &&
+                {!isFetching.searchResults && !!results.length &&
                     <div className="col-md-12">
                         {results.map((result, index) => 
                             <SearchResult {...result}
                                           key={index}
                                           onSelect={this.handleTranslationSelect} />
                         )}
-                    </div>
-                }
-                
-                {!isFetching.searchResults && results.length == 0 &&
-                    <div className="col-md-12">
-                        <p>Found no results for "{term}"</p>
                     </div>
                 }
             </div>
