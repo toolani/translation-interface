@@ -51,7 +51,10 @@ class SearchResults extends Component {
             <div className="row">
                 <div className="col-md-8">
                     <p>Showing results from all translation domains for "{term}".</p>
+                    
+                {!isFetching.searchResults && results.length > 0 &&
                     <p>Click on any result below to go to the page for that string.</p>
+                }
                 </div>
                 
                 <div className="col-md-4">

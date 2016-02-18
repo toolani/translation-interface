@@ -152,7 +152,8 @@ class LanguageChooser extends Component {
         dispatch(routeActions.replace(url))
     }
     
-    handlePerformSearch() {
+    handlePerformSearch(e) {
+        e.preventDefault()
         const { dispatch, filterText } = this.props
         const url = `/search/${filterText}`
         dispatch(routeActions.push(url))
@@ -205,21 +206,22 @@ class LanguageChooser extends Component {
                     
                     {!isFetching.strings &&
                         <div className="col-md-4">
-                            <div className="form-group">
-                                <label htmlFor="string-filter">Filter - click Search to search all domains</label>
-                                <div className="input-group">
-                                    <input className="form-control"
-                                           id="string-filter"
-                                           onChange={this.handleFilterTextChange}
-                                           placeholder="Type to filter list"
-                                           type="text"
-                                           value={filterText}/>
-                                    <div className="input-group-btn">
-                                        <button className="btn btn-default"
-                                                onClick={this.handlePerformSearch}>Search</button>
+                            <form onSubmit={this.handlePerformSearch}>
+                                <div className="form-group">
+                                    <label htmlFor="string-filter">Filter - click Search to search all domains</label>
+                                    <div className="input-group">
+                                        <input className="form-control"
+                                               id="string-filter"
+                                               onChange={this.handleFilterTextChange}
+                                               placeholder="Type to filter list"
+                                               type="text"
+                                               value={filterText}/>
+                                        <div className="input-group-btn">
+                                            <button className="btn btn-default">Search</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     }
                 </div>
