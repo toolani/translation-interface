@@ -173,6 +173,14 @@ function shouldFetchStrings(state, domain) {
         return true
     } else if (strings.isFetching) {
         return false
+    }
+    
+    // Expire the local copy of a domain's string data after 30 seconds
+    const expireAfter = 30 * 1000
+    const resultAge = Date.now() - strings.lastUpdated
+    
+    if (resultAge > expireAfter) {
+        return true
     } else {
         return strings.didInvalidate
     }
@@ -416,6 +424,7 @@ function shouldFetchSearchResults(state, searchTerm) {
         return false
     }
     
+    // Expire the local list of search results for a given term after 30 seconds
     const expireAfter = 30 * 1000
     const resultAge = Date.now() - results.lastUpdated
     

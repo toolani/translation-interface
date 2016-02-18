@@ -67,9 +67,13 @@ class LanguageChooser extends Component {
             filter: nextFilterText
         } = nextProps.params
         
+        // fetchStringsIfNeeded will only hit the API if, for example, the current local copy of the
+        // domain's string list is stale, so it should be fine to call this every time we get new
+        // props, rather than only when we change domain.
+        dispatch(fetchStringsIfNeeded(nextDomain))
+        
         if (nextDomain !== currParams.domainName) {
             dispatch(selectDomain(nextDomain))
-            dispatch(fetchStringsIfNeeded(nextDomain))
         }
         
         if (nextLanguage !== currParams.languageCode) {
