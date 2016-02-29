@@ -15,6 +15,7 @@ export const FETCH_STRINGS_REQUEST = 'FETCH_STRINGS_REQUEST'
 export const FETCH_STRINGS_SUCCESS = 'FETCH_STRINGS_SUCCESS'
 export const FETCH_STRINGS_FAILURE = 'FETCH_STRINGS_FAILURE'
 export const SELECT_STRING = 'SELECT_STRING'
+export const SELECT_STRING_FAILURE = 'SELECT_STRING'
 export const CLEAR_SELECTED_STRING = 'CLEAR_SELECTED_STRING'
 export const EDIT_SELECTED_STRING = 'EDIT_SELECTED_STRING'
 export const UPDATE_SELECTED_STRING_REQUEST = 'UPDATE_SELECTED_STRING_REQUEST'
@@ -209,22 +210,18 @@ export function clearSelectedString() {
 export function selectStringByName(string) {
     return (dispatch, getState) => {
         // Check a domain is selected
-        const {selectedDomain, selectedLanguage, stringsByDomain} = getState()
-        const strings = stringsByDomain[selectedDomain]
-        
-        if (!strings) {
-            throw new Error('Tried to select string when no strings are available.')
-        }
-        
-        // Check the given string exists in the currently selected domain
-        const currString = strings.items.find(s => s.name === string)
+        const state = getState()
+        const currString = getStringFromState(string, state)
         
         if (! currString) {
-            throw new Error(`Tried to select non-existent string '${string}'`)
+            dispatch({
+                type: SELECT_STRING_FAILURE,
+                error: new Error(`Tried to select non-existent string '${string}'`)
+            })
         }
         
         // Get the current string content for the currently selected language
-        const translation = currString.translations.find(t => t.language == selectedLanguage) || {
+        const translation = currString.translations.find(t => t.language == state.selectedLanguage) || {
             content: ""
         }
         
@@ -239,7 +236,23 @@ export function editSelectedString(newContent) {
     }
 }
 
-function findString(domain, stringName) {
+// Get the string object with the given name from the currently selected domain
+function getStringFromState(stringName, state) {
+    const {selectedDomain, stringsByDomain} = state
+    const strings = stringsByDomain[selectedDomain]
+    
+    if (!strings) {
+        throw new Error('Tried to access a string when no strings are available.')
+    }
+    
+    // Check the given string exists in the currently selected domain
+    const currString = getStringFromDomain(stringName, strings)
+    
+    return currString
+}
+
+// Get the string object with the given name from the given translation domain
+function getStringFromDomain(stringName, domain) {
     if (typeof domain === 'undefined') {
         return undefined
     }
@@ -260,9 +273,8 @@ export function saveSelectedString() {
         dispatch({type: UPDATE_SELECTED_STRING_REQUEST})
         
         const {selectedDomain, selectedLanguage, selectedString, stringsByDomain} = getState()
-        const string = findString(stringsByDomain[selectedDomain], selectedString.name)
+        const string = getStringFromDomain(selectedString.name, stringsByDomain[selectedDomain])
         const translation = findTranslation(string, selectedLanguage)
-        // const translation = stringsByDomain[selectedDomain].items.find(s => s.name === selectedString.name).translations.find(t => t.language === selectedLanguage)
         const method = translation ? 'put' : 'post'
         
         fetch(`/translation-api/domains/${selectedDomain}/strings/${selectedString.name}/translations/${selectedLanguage}`, {
@@ -325,7 +337,7 @@ export function saveNewString() {
         dispatch({type: CREATE_NEW_STRING_REQUEST})
         
         const {newString, selectedDomain, selectedLanguage, stringsByDomain} = getState()
-        const exists = typeof findString(stringsByDomain[selectedDomain], newString.name) !== 'undefined'
+        const exists = typeof getStringFromDomain(newString.name, stringsByDomain[selectedDomain]) !== 'undefined'
         
         if (exists) {
             dispatch({
