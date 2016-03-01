@@ -21,6 +21,9 @@ export const EDIT_SELECTED_STRING = 'EDIT_SELECTED_STRING'
 export const UPDATE_SELECTED_STRING_REQUEST = 'UPDATE_SELECTED_STRING_REQUEST'
 export const UPDATE_SELECTED_STRING_SUCCESS = 'UPDATE_SELECTED_STRING_SUCCESS'
 export const UPDATE_SELECTED_STRING_FAILURE = 'UPDATE_SELECTED_STRING_FAILURE'
+export const DELETE_STRING_REQUEST = 'DELETE_STRING_REQUEST'
+export const DELETE_STRING_SUCCESS = 'DELETE_STRING_SUCCESS'
+export const DELETE_STRING_FAILURE = 'DELETE_STRING_FAILURE'
 
 export const START_ADDING_NEW_STRING = 'START_ADDING_NEW_STRING'
 export const CLEAR_NEW_STRING = 'CLEAR_NEW_STRING'
@@ -373,6 +376,60 @@ export function saveNewString() {
                     })
                 }
             })
+    }
+}
+
+/**
+ * Deletes the string with the given name from the currently selected translation domain.
+ * @param  {string} string The name of a string in the current domain.
+ * @return {function}
+ */
+export function deleteStringByName(string) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const {selectedDomain} = getState()
+        
+        dispatch({
+            type: DELETE_STRING_REQUEST,
+            name: string,
+            domain: selectedDomain
+        })
+        
+        // String must exist in the currently selected domain
+        const currString = getStringFromState(string, state)
+        
+        if (typeof currString === 'undefined') {
+            dispatch({
+                type: DELETE_STRING_FAILURE,
+                error: new Error(`A string with the name '${string}' does not exist`),
+                name: string,
+                domain: selectedDomain
+            })
+        }
+        
+        // Perform the delete request
+        fetch(`/translation-api/domains/${selectedDomain}/strings/${string}`, {
+            method: 'delete',
+            headers: {
+                Accept: 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.status === 200) {
+                dispatch({
+                    type: DELETE_STRING_SUCCESS,
+                    name: string,
+                    domain: selectedDomain
+                })
+            } else {
+                dispatch({
+                    type: DELETE_STRING_FAILURE,
+                    error: new Error(`Could not delete string '${string}'. Delete failed with status: ${response.status}`),
+                    name: string,
+                    domain: selectedDomain
+                })
+            }
+        })
     }
 }
 

@@ -25,6 +25,9 @@ import {
   CREATE_NEW_STRING_REQUEST,
   CREATE_NEW_STRING_SUCCESS,
   CREATE_NEW_STRING_FAILURE,
+  DELETE_STRING_REQUEST,
+  DELETE_STRING_SUCCESS,
+  DELETE_STRING_FAILURE,
   EDIT_FILTER_TEXT,
   CLEAR_FILTER_TEXT,
   PERFORM_SEARCH_REQUEST,
@@ -87,7 +90,7 @@ function errors(state = [], action) {
   case FETCH_DOMAINS_FAILURE:
   case FETCH_LANGUAGES_FAILURE:
   case FETCH_STRINGS_FAILURE:
-    console.log()
+  case DELETE_STRING_FAILURE:
     return [...state.slice(), action.error]
   default:
     return state
@@ -333,6 +336,23 @@ function strings(state = {
       ...state.items.slice(strIndex + 1)
     ]
     return Object.assign({}, state, {items: items})
+  case DELETE_STRING_REQUEST:
+    return Object.assign({}, state, {
+      isFetching: true
+    })
+  case DELETE_STRING_SUCCESS:
+    const delIndex = state.items.findIndex(i => i.name === action.name)
+    return Object.assign({}, {
+      items: [
+        ...state.items.slice(0, delIndex),
+        ...state.items.slice(delIndex + 1)
+      ],
+      isFetching: false
+    })
+  case DELETE_STRING_FAILURE:
+    return Object.assign({}, {
+      isFetching: false
+    })
   default:
     return state
   }
@@ -346,6 +366,7 @@ function stringsByDomain(state = {}, action) {
     case FETCH_STRINGS_FAILURE:
     case CREATE_NEW_STRING_SUCCESS:
     case UPDATE_SELECTED_STRING_SUCCESS:
+    case DELETE_STRING_SUCCESS:
       return Object.assign({}, state, {
         [action.domain]: strings(state[action.domain], action)
       })
