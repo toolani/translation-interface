@@ -202,10 +202,10 @@ export function fetchStringsIfNeeded(domain) {
     }
 }
 
-export function selectString(string, content) {
+export function selectString(stringName, content) {
     return {
         type: SELECT_STRING,
-        string,
+        string: stringName,
         content
     }
 }
@@ -214,25 +214,25 @@ export function clearSelectedString() {
     return {type: CLEAR_SELECTED_STRING}
 }
 
-export function selectStringByName(string) {
+export function selectStringByName(stringName) {
     return (dispatch, getState) => {
         // Check a domain is selected
         const state = getState()
-        const currString = getStringFromState(string, state)
+        const string = getStringFromState(stringName, state)
         
-        if (! currString) {
+        if (! string) {
             dispatch({
                 type: SELECT_STRING_FAILURE,
-                error: new Error(`Tried to select non-existent string '${string}'`)
+                error: new Error(`Tried to select non-existent string '${stringName}'`)
             })
         }
         
         // Get the current string content for the currently selected language
-        const translation = currString.translations.find(t => t.language == state.selectedLanguage) || {
+        const translation = string.translations.find(t => t.language == state.selectedLanguage) || {
             content: ""
         }
         
-        dispatch(selectString(string, translation.content))
+        dispatch(selectString(stringName, translation.content))
     }
 }
 
@@ -253,9 +253,9 @@ function getStringFromState(stringName, state) {
     }
     
     // Check the given string exists in the currently selected domain
-    const currString = getStringFromDomain(stringName, strings)
+    const string = getStringFromDomain(stringName, strings)
     
-    return currString
+    return string
 }
 
 // Get the string object with the given name from the given translation domain
@@ -385,35 +385,35 @@ export function saveNewString() {
 
 /**
  * Deletes the string with the given name from the currently selected translation domain.
- * @param  {string} string The name of a string in the current domain.
+ * @param  {string} stringName The name of a string in the current domain.
  * @return {function}
  */
-export function deleteStringByName(string) {
+export function deleteStringByName(stringName) {
     return (dispatch, getState) => {
         const state = getState()
         const {selectedDomain} = state
         
         dispatch({
             type: DELETE_STRING_REQUEST,
-            name: string,
+            name: stringName,
             domain: selectedDomain
         })
         
         // String must exist in the currently selected domain
-        const currString = getStringFromState(string, state)
+        const string = getStringFromState(stringName, state)
         
-        if (typeof currString === 'undefined') {
+        if (typeof string === 'undefined') {
             dispatch({
                 type: DELETE_STRING_FAILURE,
-                error: new Error(`A string with the name '${string}' does not exist`),
-                name: string,
+                error: new Error(`A string with the name '${stringName}' does not exist`),
+                name: stringName,
                 domain: selectedDomain
             })
             return
         }
         
         // Perform the delete request
-        fetch(`/translation-api/domains/${selectedDomain}/strings/${string}`, {
+        fetch(`/translation-api/domains/${selectedDomain}/strings/${stringName}`, {
             method: 'delete',
             headers: {
                 Accept: 'application/json'
@@ -423,14 +423,14 @@ export function deleteStringByName(string) {
             if (response.status === 200) {
                 dispatch({
                     type: DELETE_STRING_SUCCESS,
-                    name: string,
+                    name: stringName,
                     domain: selectedDomain
                 })
             } else {
                 dispatch({
                     type: DELETE_STRING_FAILURE,
-                    error: new Error(`Could not delete string '${string}'. Delete failed with status: ${response.status}`),
-                    name: string,
+                    error: new Error(`Could not delete string '${stringName}'. Delete failed with status: ${response.status}`),
+                    name: stringName,
                     domain: selectedDomain
                 })
             }
