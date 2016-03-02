@@ -402,7 +402,7 @@ export function deleteStringByName(stringName) {
         // String must exist in the currently selected domain
         const string = getStringFromState(stringName, state)
         
-        if (typeof string === 'undefined') {
+        if (! string) {
             dispatch({
                 type: DELETE_STRING_FAILURE,
                 error: new Error(`A string with the name '${stringName}' does not exist`),
