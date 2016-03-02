@@ -15,6 +15,7 @@ import {
     editNewStringContent,
     saveNewString,
     deleteStringByName,
+    deleteTranslation,
     clearFilterText,
     editFilterText
 } from '../actions/actions'
@@ -37,6 +38,7 @@ class LanguageChooser extends Component {
         this.handleSelectedStringChange = this.handleSelectedStringChange.bind(this)
         this.handleSelectedStringSave = this.handleSelectedStringSave.bind(this)
         this.handleStringDelete = this.handleStringDelete.bind(this)
+        this.handleTranslationDelete = this.handleTranslationDelete.bind(this)
         this.handleFilterTextChange = this.handleFilterTextChange.bind(this)
         this.handleFilterTextClear = this.handleFilterTextClear.bind(this)
         this.handlePerformSearch = this.handlePerformSearch.bind(this)
@@ -151,6 +153,10 @@ class LanguageChooser extends Component {
     
     handleStringDelete(stringName) {
         this.props.dispatch(deleteStringByName(stringName))
+    }
+    
+    handleTranslationDelete(stringName, languageCode) {
+        this.props.dispatch(deleteTranslation(stringName, languageCode))
     }
     
     handleFilterTextChange(e) {
@@ -280,6 +286,7 @@ class LanguageChooser extends Component {
                                 onEditChange={this.handleSelectedStringChange}
                                 onEditSave={this.handleSelectedStringSave}
                                 onStringDelete={this.handleStringDelete}
+                                onTranslationDelete={this.handleTranslationDelete}
                                 onLanguageChange={this.handleLanguageChange}
                                 selectedString={selectedString} />
                 }

@@ -28,6 +28,9 @@ import {
   DELETE_STRING_REQUEST,
   DELETE_STRING_SUCCESS,
   DELETE_STRING_FAILURE,
+  DELETE_TRANSLATION_REQUEST,
+  DELETE_TRANSLATION_SUCCESS,
+  DELETE_TRANSLATION_FAILURE,
   EDIT_FILTER_TEXT,
   CLEAR_FILTER_TEXT,
   PERFORM_SEARCH_REQUEST,
@@ -91,6 +94,7 @@ function errors(state = [], action) {
   case FETCH_LANGUAGES_FAILURE:
   case FETCH_STRINGS_FAILURE:
   case DELETE_STRING_FAILURE:
+  case DELETE_TRANSLATION_FAILURE:
     return [...state.slice(), action.error]
   default:
     return state
@@ -337,6 +341,7 @@ function strings(state = {
     ]
     return Object.assign({}, state, {items: items})
   case DELETE_STRING_REQUEST:
+  case DELETE_TRANSLATION_REQUEST:
     return Object.assign({}, state, {
       isFetching: true
     })
@@ -349,13 +354,41 @@ function strings(state = {
       ],
       isFetching: false
     })
+  case DELETE_TRANSLATION_SUCCESS:
+    return Object.assign({}, deleteTranslation(state, action.name, action.language), {isFetching: false})
   case DELETE_STRING_FAILURE:
+  case DELETE_TRANSLATION_FAILURE:
     return Object.assign({}, {
       isFetching: false
     })
   default:
     return state
   }
+}
+
+/**
+ * Deletes a translation from a string in the given domain.
+ * @param  {object} domain       The state returned by strings(...)
+ * @param  {string} stringName   String to delete the translation from.
+ * @param  {string} languageCode Language code of the translation to be deleted.
+ * @return {object}              Copy of `domain` with updated `items` list.
+ */
+function deleteTranslation(domain, stringName, languageCode) {
+  const strIndex = domain.items.findIndex(i => i.name === stringName)
+  const trnIndex = domain.items[strIndex].translations.findIndex(t => t.language === languageCode)
+  const translations = [
+    ...domain.items[strIndex].translations.slice(0, trnIndex),
+    ...domain.items[strIndex].translations.slice(trnIndex + 1)
+  ]
+  const items = [
+    ...domain.items.slice(0, strIndex),
+    Object.assign({}, domain.items[strIndex], {translations: translations}),
+    ...domain.items.slice(strIndex + 1)
+  ]
+  
+  return Object.assign({}, domain, {
+    items: items
+  })
 }
 
 // A map of domain name -> the result of 'strings'
@@ -366,7 +399,12 @@ function stringsByDomain(state = {}, action) {
     case FETCH_STRINGS_FAILURE:
     case CREATE_NEW_STRING_SUCCESS:
     case UPDATE_SELECTED_STRING_SUCCESS:
+    case DELETE_STRING_REQUEST:
     case DELETE_STRING_SUCCESS:
+    case DELETE_STRING_FAILURE:
+    case DELETE_TRANSLATION_REQUEST:
+    case DELETE_TRANSLATION_SUCCESS:
+    case DELETE_TRANSLATION_FAILURE:
       return Object.assign({}, state, {
         [action.domain]: strings(state[action.domain], action)
       })

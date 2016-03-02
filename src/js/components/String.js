@@ -12,6 +12,7 @@ export default class String extends Component {
     this.handleSelection = this.handleSelection.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleStringDelete = this.handleStringDelete.bind(this)
+    this.handleTranslationDelete = this.handleTranslationDelete.bind(this)
     this.handleLanguageSelection = this.handleLanguageSelection.bind(this)
     this.isInDisplayMode = this.isInDisplayMode.bind(this)
   }
@@ -45,6 +46,10 @@ export default class String extends Component {
   
   handleStringDelete() {
     this.props.onStringDelete(this.props.name)
+  }
+  
+  handleTranslationDelete() {
+    this.props.onTranslationDelete(this.props.name, this.props.editLanguage)
   }
   
   handleLanguageSelection(languageCode) {
@@ -144,8 +149,15 @@ export default class String extends Component {
                 <div className="btn-group">
                   <ConfirmationButton className="btn btn-danger btn-sm"
                                       onConfirmation={this.handleStringDelete}
-                                      labelButton="Delete string"
-                                      labelConfirm="Really delete"
+                                      labelButton={`Delete ${name}`}
+                                      labelConfirm={`Really delete ${name}`}
+                                      labelCancel="Cancel" />
+                </div>
+                <div className="btn-group">
+                  <ConfirmationButton className="btn btn-danger btn-sm"
+                                      onConfirmation={this.handleTranslationDelete}
+                                      labelButton={`Delete '${editLanguage}' translation`}
+                                      labelConfirm={`Really delete '${editLanguage}' translation`}
                                       labelCancel="Cancel" />
                 </div>
               </div>
@@ -190,6 +202,7 @@ String.propTypes = {
   onSave: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
   onStringDelete: PropTypes.func.isRequired,
+  onTranslationDelete: PropTypes.func.isRequired,
   translations: PropTypes.arrayOf(
     PropTypes.shape({
       language: PropTypes.string.isRequired,

@@ -11,6 +11,7 @@ export default class StringList extends Component {
           onLanguageChange,
           onSelect,
           onStringDelete,
+          onTranslationDelete,
           selectedString,
           strings
         } = this.props
@@ -29,7 +30,8 @@ export default class StringList extends Component {
                       onLanguageChange={onLanguageChange}
                       onSave={onEditSave}
                       onSelect={onSelect}
-                      onStringDelete={onStringDelete} />
+                      onStringDelete={onStringDelete}
+                      onTranslationDelete={onTranslationDelete} />
             )}
           </div>
         )
@@ -48,6 +50,7 @@ StringList.PropTypes = {
     onLanguageChange: PropTypes.func.isRequired,
     onSelect: PropTypes.func.isRequired,
     onStringDelete: PropTypes.func.isRequired,
+    onTranslationDelete: PropTypes.func.isRequired,
     selectedString: PropTypes.shape({
         name: PropTypes.string.isRequired,
         content: PropTypes.string.isRequired,

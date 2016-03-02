@@ -25,6 +25,10 @@ export const DELETE_STRING_REQUEST = 'DELETE_STRING_REQUEST'
 export const DELETE_STRING_SUCCESS = 'DELETE_STRING_SUCCESS'
 export const DELETE_STRING_FAILURE = 'DELETE_STRING_FAILURE'
 
+export const DELETE_TRANSLATION_REQUEST = 'DELETE_TRANSLATION_REQUEST'
+export const DELETE_TRANSLATION_SUCCESS = 'DELETE_TRANSLATION_SUCCESS'
+export const DELETE_TRANSLATION_FAILURE = 'DELETE_TRANSLATION_FAILURE'
+
 export const START_ADDING_NEW_STRING = 'START_ADDING_NEW_STRING'
 export const CLEAR_NEW_STRING = 'CLEAR_NEW_STRING'
 export const EDIT_NEW_STRING = 'EDIT_NEW_STRING'
@@ -263,7 +267,7 @@ function getStringFromDomain(stringName, domain) {
     return domain.items.find(s => s.name === stringName)
 }
 
-function findTranslation(string, findLanguage) {
+function getTranslationFromString(findLanguage, string) {
     if (typeof string === 'undefined') {
         return undefined
     }
@@ -277,7 +281,7 @@ export function saveSelectedString() {
         
         const {selectedDomain, selectedLanguage, selectedString, stringsByDomain} = getState()
         const string = getStringFromDomain(selectedString.name, stringsByDomain[selectedDomain])
-        const translation = findTranslation(string, selectedLanguage)
+        const translation = getTranslationFromString(selectedLanguage, string)
         const method = translation ? 'put' : 'post'
         
         fetch(`/translation-api/domains/${selectedDomain}/strings/${selectedString.name}/translations/${selectedLanguage}`, {
@@ -387,7 +391,7 @@ export function saveNewString() {
 export function deleteStringByName(string) {
     return (dispatch, getState) => {
         const state = getState()
-        const {selectedDomain} = getState()
+        const {selectedDomain} = state
         
         dispatch({
             type: DELETE_STRING_REQUEST,
@@ -405,6 +409,7 @@ export function deleteStringByName(string) {
                 name: string,
                 domain: selectedDomain
             })
+            return
         }
         
         // Perform the delete request
@@ -427,6 +432,69 @@ export function deleteStringByName(string) {
                     error: new Error(`Could not delete string '${string}'. Delete failed with status: ${response.status}`),
                     name: string,
                     domain: selectedDomain
+                })
+            }
+        })
+    }
+}
+
+/**
+ * Deletes the translation with the given language code from the string with the given name (in the 
+ * currently selected domain).
+ * @param  {string} stringName   Name of the string to delete the translation from.
+ * @param  {string} languageCode Code identifying the language of the translation to be deleted.
+ * @return {function}
+ */
+export function deleteTranslation(stringName, languageCode) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const {selectedDomain} = state
+        
+        dispatch({
+            type: DELETE_TRANSLATION_REQUEST,
+            name: stringName,
+            domain: selectedDomain,
+            language: languageCode
+        })
+        
+        // Check that the string and translation exist in the currently selected domain
+        const string = getStringFromState(stringName, state)
+        const translation = getTranslationFromString(languageCode, string)
+        
+        if (! string || ! translation) {
+            const message = string ? `The string '${stringName}' is not translated into '${languageCode}'` : `A string with the name '${stringName}' does not exist`
+            dispatch({
+                type: DELETE_TRANSLATION_FAILURE,
+                error: new Error(message),
+                name: stringName,
+                domain: selectedDomain,
+                language: languageCode
+            })
+            return
+        }
+        
+        // Perform the delete request
+        fetch(`/translation-api/domains/${selectedDomain}/strings/${stringName}/translations/${languageCode}`, {
+            method: 'delete',
+            headers: {
+                Accept: 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.status === 200) {
+                dispatch({
+                    type: DELETE_TRANSLATION_SUCCESS,
+                    name: stringName,
+                    domain: selectedDomain,
+                    language: languageCode
+                })
+            } else {
+                dispatch({
+                    type: DELETE_TRANSLATION_FAILURE,
+                    error: new Error(`Could not delete '${languageCode}' translation of string '${stringName}'. Delete failed with status: ${response.status}`),
+                    name: stringName,
+                    domain: selectedDomain,
+                    language: languageCode
                 })
             }
         })
