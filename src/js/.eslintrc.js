@@ -1,35 +1,26 @@
 /*global module*/
 module.exports = {
     rules: {
-        indent: [
-            0,
-            2
-        ],
-        quotes: [
-            0,
-            'single'
-        ],
-        'linebreak-style': [
-            2,
-            'unix'
-        ],
-        'no-console': [0],
-        'no-unused-vars': [2, {varsIgnorePattern: "^React$"}],
-        'quote-props': [1, 'as-needed'],
-        semi: [
-            1,
-            'never'
-        ]
+        indent: ['off', 2],
+        quotes: ['off', 'single'],
+        'linebreak-style': ['error', 'unix'],
+        'no-console': ['off'],
+        'no-unused-vars': ['error', {varsIgnorePattern: "^React$"}],
+        'quote-props': ['warn', 'as-needed'],
+        semi: ['warn', 'never']
     },
     env: {
         es6: true,
         browser: true
     },
-    extends: 'eslint:recommended',
-    ecmaFeatures: {
+    extends: ['eslint:recommended', 'plugin:react/recommended'],
+    parserOptions: {
+      ecmaVersion: 6,
+      sourceType: 'module',
+      ecmaFeatures: {
         jsx: true,
-        experimentalObjectRestSpread: true,
-        modules: true
+        experimentalObjectRestSpread: true
+      }
     },
     plugins: [
         'react'
