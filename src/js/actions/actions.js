@@ -1,5 +1,11 @@
 import fetch from 'isomorphic-fetch'
 
+export const EXPORT_ALL_DOMAINS_REQUEST = 'EXPORT_ALL_DOMAINS_REQUEST'
+export const EXPORT_ALL_DOMAINS_SUCCESS = 'EXPORT_ALL_DOMAINS_SUCCESS'
+export const EXPORT_ALL_DOMAINS_FAILURE = 'EXPORT_ALL_DOMAINS_FAILURE'
+export const EXPORT_DOMAIN_REQUEST = 'EXPORT_DOMAIN_REQUEST'
+export const EXPORT_DOMAIN_SUCCESS = 'EXPORT_DOMAIN_SUCCESS'
+export const EXPORT_DOMAIN_FAILURE = 'EXPORT_DOMAIN_FAILURE'
 export const FETCH_DOMAINS_REQUEST = 'FETCH_DOMAINS_REQUEST'
 export const FETCH_DOMAINS_SUCCESS = 'FETCH_DOMAINS_SUCCESS'
 export const FETCH_DOMAINS_FAILURE = 'FETCH_DOMAINS_FAILURE'
@@ -58,6 +64,65 @@ function reportHttpError(dispatch, type, message) {
             type: type,
             error: new Error(message + ` (${error.message})`)
         })
+    }
+}
+
+function requestExportDomain(domain) {
+    return {
+        type: EXPORT_DOMAIN_REQUEST,
+        domain
+    }
+}
+
+function exportDomainSuccess(domain) {
+    return {
+        type: EXPORT_DOMAIN_SUCCESS,
+        domain
+    }
+}
+
+/**
+ * Causes the selected domain to be exported to XML on disk.
+ */
+export function exportSelectedDomain() {
+    return (dispatch, getState) => {
+        const state = getState()
+        const {selectedDomain} = state
+        
+        if (! selectedDomain) {
+            return
+        }
+        
+        dispatch(requestExportDomain(selectedDomain))
+        
+        return fetch(`/translation-api/domains/${selectedDomain}/export`, {
+                method: 'post',
+                headers: {
+                    Accept: 'application/json'
+                }
+            })
+            .then(checkStatus)
+            .then(() => dispatch(exportDomainSuccess()))
+            .catch(reportHttpError(dispatch, EXPORT_DOMAIN_FAILURE, `Could not export domain '${selectedDomain}'`))
+    }
+}
+
+/**
+ * Causes ALL domains to be exported to XML on disk.
+ */
+export function exportAllDomains() {
+    return (dispatch) => {
+        dispatch({type: EXPORT_ALL_DOMAINS_REQUEST})
+        
+        return fetch(`/translation-api/export`, {
+                method: 'post',
+                headers: {
+                    Accept: 'application/json'
+                }
+            })
+            .then(checkStatus)
+            .then(() => dispatch({type: EXPORT_ALL_DOMAINS_SUCCESS}))
+            .catch(reportHttpError(dispatch, EXPORT_ALL_DOMAINS_FAILURE, "Could not export all domains"))
     }
 }
 

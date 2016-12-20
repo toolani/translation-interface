@@ -2,6 +2,8 @@ import React, {Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { routeActions } from 'react-router-redux'
 import {
+    exportAllDomains,
+    exportSelectedDomain,
     selectDomain,
     selectLanguage,
     fetchStringsIfNeeded,
@@ -20,6 +22,7 @@ import {
     editFilterText
 } from '../actions/actions'
 import { stringEditorSelector } from '../selectors/selectors'
+import Exporter from '../components/Exporter'
 import Picker from '../components/Picker'
 import StringAdder from '../components/StringAdder'
 import StringList from '../components/StringList'
@@ -29,6 +32,8 @@ class LanguageChooser extends Component {
         super(props)
         this.handleDomainChange = this.handleDomainChange.bind(this)
         this.handleLanguageChange = this.handleLanguageChange.bind(this)
+        this.handleExportAllDomains = this.handleExportAllDomains.bind(this)
+        this.handleExportSelectedDomain = this.handleExportSelectedDomain.bind(this)
         this.handleNewStringEditStart = this.handleNewStringEditStart.bind(this)
         this.handleNewStringEditCancel = this.handleNewStringEditCancel.bind(this)
         this.handleNewStringChange = this.handleNewStringChange.bind(this)
@@ -110,6 +115,14 @@ class LanguageChooser extends Component {
         } else {
             dispatch(routeActions.push(`/domain/${selectedDomain}/lang/${nextLanguage}`))
         }
+    }
+    
+    handleExportAllDomains() {
+        this.props.dispatch(exportAllDomains())
+    }
+    
+    handleExportSelectedDomain() {
+        this.props.dispatch(exportSelectedDomain())
     }
     
     handleNewStringEditStart() {
@@ -238,6 +251,13 @@ class LanguageChooser extends Component {
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                    }
+                    
+                    {!isFetching.strings && 
+                        <div className="col-md-3">
+                            <Exporter onExportSelected={this.handleExportSelectedDomain}
+                                      onExportAll={this.handleExportAllDomains} />
                         </div>
                     }
                 </div>
