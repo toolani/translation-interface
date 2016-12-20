@@ -14,9 +14,9 @@ const logger = createLogger({
 const reduxRouterMiddleware = syncHistory(hashHistory)
 
 const createStoreWithMiddleware = (process.env.NODE_ENV === ENV_DEV) ? applyMiddleware(
-    logger,
     thunk,
-    reduxRouterMiddleware
+    reduxRouterMiddleware,
+    logger
 )(createStore) : applyMiddleware(thunk, reduxRouterMiddleware)(createStore)
 
 export default function configureStore() {
