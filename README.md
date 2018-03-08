@@ -21,14 +21,6 @@ The API provided by go-translation-api's `serve` command must be available on th
 
     <LocationMatch "/translation-api/">
           ProxyPass http://0.0.0.0:8181/
-          Header always add "Access-Control-Allow-Origin" "*"
-          Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
-          Header always set Access-Control-Allow-Headers "Content-Type, origin, accept"
-          Header always set Access-Control-Max-Age "1000"
-
-          RewriteEngine On
-          RewriteCond %{REQUEST_METHOD} OPTIONS
-          RewriteRule ^(.*)$ $1 [R=200,L]
     </LocationMatch>
 
     Options -Indexes FollowSymLinks
